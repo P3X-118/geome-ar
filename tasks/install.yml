@@ -15,7 +15,7 @@
     group: "{{ reitti_gid }}"
   with_items:
     - "{{ reitti_base_path }}"
-    - "{{ reitti_base_path }}"
+    - "{{ reitti_data_path }}"
     - "{{ reitti_tilecache_base_path }}"
 
 - name: Ensure Reitti tile cache server data path exists

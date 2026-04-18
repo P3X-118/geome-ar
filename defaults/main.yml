@@ -12,8 +12,9 @@
 reitti_enabled: true
 
 reitti_identifier: reitti
-reitti_base_path: "{{ reitti_base_path }}/reitti"
-reitti_tilecache_base_path: "{{ reitti_base_path }}/server"
+reitti_base_path: "/{{ reitti_identifier }}"
+reitti_data_path: "{{ reitti_base_path }}/data"
+reitti_tilecache_base_path: "{{ reitti_base_path }}/tilecache"
 reitti_tilecache_data_path: "{{ reitti_tilecache_base_path }}/data"
 
 reitti_uid: ""
