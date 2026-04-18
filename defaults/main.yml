@@ -1,0 +1,532 @@
+# SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
+# SPDX-FileCopyrightText: 2023 MASH project contributors
+# SPDX-FileCopyrightText: 2023-2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2024 Nikita Chernyi
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+# Project source code URL: https://github.com/karlomikus/bar-assistant
+
+barassistant_enabled: true
+
+barassistant_identifier: barassistant
+barassistant_base_path: "/{{ barassistant_identifier }}"
+barassistant_saltrim_base_path: "{{ barassistant_base_path }}/saltrim"
+barassistant_server_base_path: "{{ barassistant_base_path }}/server"
+barassistant_server_data_path: "{{ barassistant_server_base_path }}/data"
+
+barassistant_uid: ""
+barassistant_gid: ""
+
+# The hostname at which Bar Assistant is served.
+barassistant_hostname: ""
+
+# The base container network. It will be auto-created by this role if it doesn't exist already.
+barassistant_container_network: "{{ barassistant_identifier }}"
+
+# Control if the container network is deleted on uninstalling.
+barassistant_container_network_deletion_enabled: true
+
+# Specify the Bar Assistant server instance URL
+barassistant_environment_variables_server_url: "{{ barassistant_server_scheme }}://{{ barassistant_hostname }}{{ barassistant_server_path_prefix }}"
+
+# Specify APP_URL
+barassistant_environment_variables_app_url: "{{ barassistant_environment_variables_server_url }}"
+
+# barassistant_restart_necessary controls whether the Bar Assistant systemd
+# services will be restarted (when true) or merely started (when false) by the
+# systemd service manager role (when conditional restart is enabled).
+#
+# This value is automatically computed during installation based on whether
+# any configuration files, the systemd service file, or the container image changed.
+# The default of `false` means "no restart needed" — appropriate when the role's
+# installation tasks haven't run (e.g., due to --tags skipping them).
+barassistant_restart_necessary: false
+
+########################################################################
+#                                                                      #
+# saltrim                                                              #
+#                                                                      #
+########################################################################
+
+barassistant_saltrim_identifier: "{{ barassistant_identifier }}-saltrim"
+
+# renovate: datasource=docker depName=barassistant/salt-rim
+barassistant_saltrim_version: 4.14.1
+
+barassistant_saltrim_scheme: https
+
+barassistant_saltrim_hostname: "{{ barassistant_hostname }}"
+
+# The path at which Salt Rim is exposed
+barassistant_saltrim_path_prefix: "/"
+
+barassistant_saltrim_container_image: "{{ barassistant_saltrim_container_image_registry_prefix }}barassistant/salt-rim:{{ barassistant_saltrim_container_image_tag }}"
+barassistant_saltrim_container_image_tag: "{{ barassistant_saltrim_version }}"
+barassistant_saltrim_container_image_registry_prefix: "{{ barassistant_saltrim_container_image_registry_prefix_upstream }}"
+barassistant_saltrim_container_image_registry_prefix_upstream: "{{ barassistant_saltrim_container_image_registry_prefix_upstream_default }}"
+barassistant_saltrim_container_image_registry_prefix_upstream_default: docker.io/
+barassistant_saltrim_container_image_force_pull: "{{ barassistant_saltrim_container_image.endswith(':latest') }}"
+
+barassistant_saltrim_container_network: "{{ barassistant_container_network }}"
+
+# Specify how the Salt Rim container publishes its HTTP port (as defined by `barassistant_saltrim_container_http_port`).
+#
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:2586"), or empty string to not expose.
+barassistant_saltrim_container_http_host_bind_port: ""
+
+# The port number in the container
+barassistant_saltrim_container_http_port: 8080
+
+# A list of additional container networks that the container would be connected to.
+# The role does not create these networks, so make sure they already exist.
+# Use this to expose this container to another reverse proxy, which runs in a different container network.
+barassistant_saltrim_container_additional_networks: "{{ barassistant_saltrim_container_additional_networks_auto + barassistant_saltrim_container_additional_networks_custom }}"
+barassistant_saltrim_container_additional_networks_auto: []
+barassistant_saltrim_container_additional_networks_custom: []
+
+# A list of additional "volumes" to mount in the container.
+# This list gets populated dynamically at runtime. You can provide a different default value,
+# if you wish to mount your own files into the container.
+# Contains definition objects like this: `{"type": "bind", "src": "/outside", "dst": "/inside", "options": "readonly"}.
+# See the `--mount` documentation for the `docker run` command.
+barassistant_saltrim_container_additional_volumes: "{{ barassistant_saltrim_container_additional_volumes_auto + barassistant_saltrim_container_additional_volumes_custom }}"
+barassistant_saltrim_container_additional_volumes_auto: []
+barassistant_saltrim_container_additional_volumes_custom: []
+
+# barassistant_saltrim_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
+# See `../templates/labels_saltrim.j2` for details.
+#
+# To inject your own other container labels, see `barassistant_saltrim_container_labels_additional_labels_custom`.
+barassistant_saltrim_container_labels_traefik_enabled: true
+barassistant_saltrim_container_labels_traefik_docker_network: "{{ barassistant_saltrim_container_network }}"
+barassistant_saltrim_container_labels_traefik_hostname: "{{ barassistant_saltrim_hostname }}"
+# The path prefix must either be `/` or not end with a slash (e.g. `/barassistant-saltrim`).
+barassistant_saltrim_container_labels_traefik_path_prefix: "{{ barassistant_saltrim_path_prefix }}"
+barassistant_saltrim_container_labels_traefik_rule: "Host(`{{ barassistant_saltrim_container_labels_traefik_hostname }}`){% if barassistant_saltrim_container_labels_traefik_path_prefix != '/' %} && PathPrefix(`{{ barassistant_saltrim_container_labels_traefik_path_prefix }}`){% endif %}"
+barassistant_saltrim_container_labels_traefik_priority: 0
+barassistant_saltrim_container_labels_traefik_entrypoints: web-secure
+barassistant_saltrim_container_labels_traefik_tls: "{{ barassistant_saltrim_container_labels_traefik_entrypoints != 'web' }}"
+barassistant_saltrim_container_labels_traefik_tls_certResolver: default  # noqa var-naming
+
+# Controls which additional headers to attach to all HTTP requests.
+# To add your own custom request headers, use `barassistant_saltrim_container_labels_traefik_additional_request_headers_custom`
+barassistant_saltrim_container_labels_traefik_additional_request_headers: "{{ barassistant_saltrim_container_labels_traefik_additional_request_headers_auto | combine(barassistant_saltrim_container_labels_traefik_additional_request_headers_custom) }}"
+barassistant_saltrim_container_labels_traefik_additional_request_headers_auto: {}
+barassistant_saltrim_container_labels_traefik_additional_request_headers_custom: {}
+
+# Controls which additional headers to attach to all HTTP responses.
+# To add your own custom response headers, use `barassistant_saltrim_container_labels_traefik_additional_response_headers_custom`
+barassistant_saltrim_container_labels_traefik_additional_response_headers: "{{ barassistant_saltrim_container_labels_traefik_additional_response_headers_auto | combine(barassistant_saltrim_container_labels_traefik_additional_response_headers_custom) }}"
+barassistant_saltrim_container_labels_traefik_additional_response_headers_auto: |
+  {{
+    {}
+    | combine ({'X-XSS-Protection': barassistant_saltrim_http_header_xss_protection} if barassistant_saltrim_http_header_xss_protection else {})
+    | combine ({'X-Content-Type-Options': barassistant_saltrim_http_header_content_type_options} if barassistant_saltrim_http_header_content_type_options else {})
+    | combine ({'Content-Security-Policy': barassistant_saltrim_http_header_content_security_policy} if barassistant_saltrim_http_header_content_security_policy else {})
+    | combine ({'Permissions-Policy': barassistant_saltrim_http_header_permissions_policy} if barassistant_saltrim_http_header_permissions_policy else {})
+    | combine ({'Strict-Transport-Security': barassistant_saltrim_http_header_strict_transport_security} if barassistant_saltrim_http_header_strict_transport_security and barassistant_saltrim_container_labels_traefik_tls else {})
+  }}
+barassistant_saltrim_container_labels_traefik_additional_response_headers_custom: {}
+
+# barassistant_saltrim_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
+# To add your own custom labels, use `barassistant_saltrim_container_labels_additional_labels_custom`
+# See `../templates/labels_saltrim.j2` for details.
+#
+# Example:
+# barassistant_saltrim_container_labels_additional_labels_custom:
+#   - my.label=1
+#   - another.label="here"
+barassistant_saltrim_container_labels_additional_labels: "{{ barassistant_saltrim_container_labels_additional_labels_auto + barassistant_saltrim_container_labels_additional_labels_custom }}"
+barassistant_saltrim_container_labels_additional_labels_auto: []
+barassistant_saltrim_container_labels_additional_labels_custom: []
+
+# A list of extra arguments to pass to the container (`docker create` command)
+barassistant_saltrim_container_extra_arguments: "{{ barassistant_saltrim_container_extra_arguments_auto + barassistant_saltrim_container_extra_arguments_custom }}"
+barassistant_saltrim_container_extra_arguments_auto: []
+barassistant_saltrim_container_extra_arguments_custom: []
+
+# Specifies the value of the `X-XSS-Protection` header
+# Stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.
+#
+# Learn more about it is here:
+# - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
+# - https://portswigger.net/web-security/cross-site-scripting/reflected
+barassistant_saltrim_http_header_xss_protection: "1; mode=block"
+
+# Specifies the value of the `X-Content-Type-Options` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
+barassistant_saltrim_http_header_content_type_options: nosniff
+
+# Specifies the value of the `Content-Security-Policy` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
+barassistant_saltrim_http_header_content_security_policy: frame-ancestors 'self'
+
+# Specifies the value of the `Permissions-Policy` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy
+barassistant_saltrim_http_header_permissions_policy: "{{ 'interest-cohort=()' if barassistant_saltrim_floc_optout_enabled else '' }}"
+
+# Specifies the value of the `Strict-Transport-Security` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+barassistant_saltrim_http_header_strict_transport_security: "max-age=31536000; includeSubDomains{{ '; preload' if barassistant_saltrim_hsts_preload_enabled else '' }}"
+
+# Controls whether to send a "Permissions-Policy interest-cohort=();" header along with all responses
+#
+# Learn more about what it is here:
+# - https://www.eff.org/deeplinks/2021/03/googles-floc-terrible-idea
+# - https://paramdeo.com/blog/opting-your-website-out-of-googles-floc-network
+# - https://amifloced.org/
+#
+# Of course, a better solution is to just stop using browsers (like Chrome), which participate in such tracking practices.
+# See: `barassistant_saltrim_http_header_permissions_policy`
+barassistant_saltrim_floc_optout_enabled: true
+
+# Controls if HSTS preloading is enabled
+#
+# In its strongest and recommended form, the [HSTS policy](https://www.chromium.org/hsts) includes all subdomains, and
+# indicates a willingness to be "preloaded" into browsers:
+# `Strict-Transport-Security: max-age=31536000; includeSubDomains; preload`
+# For more information visit:
+# - https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
+# - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+# - https://hstspreload.org/#opt-in
+# See: `barassistant_http_header_strict_transport_security`
+barassistant_saltrim_hsts_preload_enabled: false
+
+# List of systemd services that the Bar Assistant Salt Rim systemd service depends on
+barassistant_saltrim_systemd_required_services_list: "{{ barassistant_saltrim_systemd_required_services_list_default + barassistant_saltrim_systemd_required_services_list_auto + barassistant_saltrim_systemd_required_services_list_custom }}"
+barassistant_saltrim_systemd_required_services_list_default: |
+  {{
+    ([devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [])
+    +
+    ([barassistant_server_identifier ~ '.service'])
+  }}
+barassistant_saltrim_systemd_required_services_list_auto: []
+barassistant_saltrim_systemd_required_services_list_custom: []
+
+# List of systemd services that the Bar Assistant Salt Rim systemd service wants
+barassistant_saltrim_systemd_wanted_services_list: "{{ barassistant_saltrim_systemd_wanted_services_list_default + barassistant_saltrim_systemd_wanted_services_list_auto + barassistant_saltrim_systemd_wanted_services_list_custom }}"
+barassistant_saltrim_systemd_wanted_services_list_default: []
+barassistant_saltrim_systemd_wanted_services_list_auto: []
+barassistant_saltrim_systemd_wanted_services_list_custom: []
+
+# Controls how long to wait for the container to stop gracefully before killing it.
+barassistant_saltrim_container_stop_grace_time_seconds: "{{ devture_systemd_docker_base_container_stop_grace_time_seconds }}"
+
+# Controls how long the pre-start cleanup should wait for stale container-name release
+# before failing startup explicitly.
+barassistant_saltrim_container_cleanup_timeout_seconds: "{{ devture_systemd_docker_base_container_cleanup_timeout_seconds }}"
+
+# Controls the delay between pre-start cleanup retries.
+barassistant_saltrim_container_cleanup_retry_delay_seconds: "{{ devture_systemd_docker_base_container_cleanup_retry_delay_seconds }}"
+
+# Shell command used in the systemd pre-start phase to deterministically remove a stale
+# container and wait until Docker releases its name.
+barassistant_saltrim_container_cleanup_command: |
+  i=0;
+  while [ "$i" -lt {{ barassistant_saltrim_container_cleanup_timeout_seconds }} ]; do
+  {{ devture_systemd_docker_base_host_command_docker }} stop -t {{ barassistant_saltrim_container_stop_grace_time_seconds }} {{ barassistant_saltrim_identifier }} >/dev/null 2>&1 || true;
+  {{ devture_systemd_docker_base_host_command_docker }} rm -f {{ barassistant_saltrim_identifier }} >/dev/null 2>&1 || true;
+  if {{ devture_systemd_docker_base_host_command_docker }} container inspect {{ barassistant_saltrim_identifier }} >/dev/null 2>&1; then
+  i=$((i + 1));
+  sleep {{ barassistant_saltrim_container_cleanup_retry_delay_seconds }};
+  continue;
+  fi;
+  if {{ devture_systemd_docker_base_host_command_docker }} info >/dev/null 2>&1; then
+  exit 0;
+  fi;
+  echo "Failed to query Docker daemon while cleaning up {{ barassistant_saltrim_identifier }}" >&2;
+  exit 1;
+  done;
+  echo "Failed to remove stale container {{ barassistant_saltrim_identifier }} after {{ barassistant_saltrim_container_cleanup_timeout_seconds }} attempts" >&2;
+  exit 1
+
+# Control if mailer is enabled
+barassistant_mailer_enabled: false
+
+# Specify the timezone
+barassistant_saltrim_environment_variables_tz: UTC
+
+# Specify the Meilisearch server instance URL to enable the search and filtering functions
+barassistant_saltrim_environment_variables_meilisearch_url: ""
+
+# Additional environment variables.
+barassistant_saltrim_environment_variables_additional_variables: ""
+
+########################################################################
+#                                                                      #
+# /saltrim                                                             #
+#                                                                      #
+########################################################################
+
+########################################################################
+#                                                                      #
+# server                                                               #
+#                                                                      #
+########################################################################
+
+barassistant_server_identifier: "{{ barassistant_identifier }}-server"
+
+# renovate: datasource=docker depName=barassistant/server
+barassistant_server_version: 5.13.2
+
+barassistant_server_scheme: https
+
+barassistant_server_hostname: "{{ barassistant_hostname }}"
+
+# The path at which the server is exposed
+barassistant_server_path_prefix: "/bar"
+
+barassistant_server_container_image: "{{ barassistant_server_container_image_registry_prefix }}barassistant/server:{{ barassistant_server_container_image_tag }}"
+barassistant_server_container_image_tag: "{{ barassistant_server_version }}"
+barassistant_server_container_image_registry_prefix: "{{ barassistant_server_container_image_registry_prefix_upstream }}"
+barassistant_server_container_image_registry_prefix_upstream: "{{ barassistant_server_container_image_registry_prefix_upstream_default }}"
+barassistant_server_container_image_registry_prefix_upstream_default: docker.io/
+barassistant_server_container_image_force_pull: "{{ barassistant_saltrim_container_image.endswith(':latest') }}"
+
+barassistant_server_container_network: "{{ barassistant_container_network }}"
+
+# Specify how the server container publishes its HTTP port (as defined by `barassistant_server_container_http_port`).
+#
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:2586"), or empty string to not expose.
+barassistant_server_container_http_host_bind_port: ""
+
+# The port number in the container
+barassistant_server_container_http_port: 8080
+
+# A list of additional container networks that the container would be connected to.
+# The role does not create these networks, so make sure they already exist.
+# Use this to expose this container to another reverse proxy, which runs in a different container network.
+barassistant_server_container_additional_networks: "{{ barassistant_server_container_additional_networks_auto + barassistant_server_container_additional_networks_custom }}"
+barassistant_server_container_additional_networks_auto: []
+barassistant_server_container_additional_networks_custom: []
+
+# A list of additional "volumes" to mount in the container.
+# This list gets populated dynamically at runtime. You can provide a different default value,
+# if you wish to mount your own files into the container.
+# Contains definition objects like this: `{"type": "bind", "src": "/outside", "dst": "/inside", "options": "readonly"}.
+# See the `--mount` documentation for the `docker run` command.
+barassistant_server_container_additional_volumes: "{{ barassistant_server_container_additional_volumes_auto + barassistant_server_container_additional_volumes_custom }}"
+barassistant_server_container_additional_volumes_auto: []
+barassistant_server_container_additional_volumes_custom: []
+
+# barassistant_server_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
+# See `../templates/labels_server.j2` for details.
+#
+# To inject your own other container labels, see `barassistant_server_container_labels_additional_labels_custom`.
+barassistant_server_container_labels_traefik_enabled: true
+barassistant_server_container_labels_traefik_docker_network: "{{ barassistant_server_container_network }}"
+barassistant_server_container_labels_traefik_hostname: "{{ barassistant_server_hostname }}"
+# The path prefix must either be `/` or not end with a slash (e.g. `/server`).
+barassistant_server_container_labels_traefik_path_prefix: "{{ barassistant_server_path_prefix }}"
+barassistant_server_container_labels_traefik_rule: "Host(`{{ barassistant_server_container_labels_traefik_hostname }}`){% if barassistant_server_container_labels_traefik_path_prefix != '/' %} && PathPrefix(`{{ barassistant_server_container_labels_traefik_path_prefix }}`){% endif %}"
+barassistant_server_container_labels_traefik_priority: 0
+barassistant_server_container_labels_traefik_entrypoints: web-secure
+barassistant_server_container_labels_traefik_tls: "{{ barassistant_server_container_labels_traefik_entrypoints != 'web' }}"
+barassistant_server_container_labels_traefik_tls_certResolver: default  # noqa var-naming
+
+# Controls if labels are added to expose the Prometheus metrics publicly.
+barassistant_server_container_labels_traefik_metrics_enabled: "{{ barassistant_server_environment_variables_metrics_enabled }}"
+barassistant_server_container_labels_traefik_metrics_hostname: "{{ barassistant_server_hostname }}"
+# The path prefix must either be `/` or not end with a slash (e.g. `/metrics`).
+barassistant_server_container_labels_traefik_metrics_path_prefix: /metrics
+barassistant_server_container_labels_traefik_metrics_rule: "Host(`{{ barassistant_server_container_labels_traefik_metrics_hostname }}`){% if barassistant_server_container_labels_traefik_metrics_path_prefix != '/' %} && PathPrefix(`{{ barassistant_server_container_labels_traefik_metrics_path_prefix }}`){% endif %}"
+barassistant_server_container_labels_traefik_metrics_priority: 0
+barassistant_server_container_labels_traefik_metrics_entrypoints: "{{ barassistant_server_container_labels_traefik_entrypoints }}"
+barassistant_server_container_labels_traefik_metrics_middlewares: []
+barassistant_server_container_labels_traefik_metrics_tls: "{{ barassistant_server_container_labels_traefik_metrics_entrypoints != 'web' }}"
+barassistant_server_container_labels_traefik_metrics_tls_certResolver: "{{ barassistant_server_container_labels_traefik_tls_certResolver }}"  # noqa var-naming
+barassistant_server_container_labels_traefik_metrics_middleware_basic_auth_enabled: false
+# See: https://doc.traefik.io/traefik/reference/routing-configuration/http/middlewares/basicauth/
+barassistant_server_container_labels_traefik_metrics_middleware_basic_auth_users: ""
+
+# Controls which additional headers to attach to all HTTP requests.
+# To add your own custom request headers, use `barassistant_server_container_labels_traefik_additional_request_headers_custom`
+barassistant_server_container_labels_traefik_additional_request_headers: "{{ barassistant_server_container_labels_traefik_additional_request_headers_auto | combine(barassistant_server_container_labels_traefik_additional_request_headers_custom) }}"
+barassistant_server_container_labels_traefik_additional_request_headers_auto: {}
+barassistant_server_container_labels_traefik_additional_request_headers_custom: {}
+
+# Controls which additional headers to attach to all HTTP responses.
+# To add your own custom response headers, use `barassistant_server_container_labels_traefik_additional_response_headers_custom`
+barassistant_server_container_labels_traefik_additional_response_headers: "{{ barassistant_server_container_labels_traefik_additional_response_headers_auto | combine(barassistant_server_container_labels_traefik_additional_response_headers_custom) }}"
+barassistant_server_container_labels_traefik_additional_response_headers_auto: |
+  {{
+    {}
+    | combine ({'X-XSS-Protection': barassistant_server_http_header_xss_protection} if barassistant_server_http_header_xss_protection else {})
+    | combine ({'X-Content-Type-Options': barassistant_server_http_header_content_type_options} if barassistant_server_http_header_content_type_options else {})
+    | combine ({'Content-Security-Policy': barassistant_server_http_header_content_security_policy} if barassistant_server_http_header_content_security_policy else {})
+    | combine ({'Permissions-Policy': barassistant_server_http_header_permissions_policy} if barassistant_server_http_header_permissions_policy else {})
+    | combine ({'Strict-Transport-Security': barassistant_server_http_header_strict_transport_security} if barassistant_server_http_header_strict_transport_security and barassistant_server_container_labels_traefik_tls else {})
+  }}
+barassistant_server_container_labels_traefik_additional_response_headers_custom: {}
+
+# barassistant_server_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
+# To add your own custom labels, use `barassistant_server_container_labels_additional_labels_custom`
+# See `../templates/labels_server.j2` for details.
+#
+# Example:
+# barassistant_server_container_labels_additional_labels_custom:
+#   - my.label=1
+#   - another.label="here"
+barassistant_server_container_labels_additional_labels: "{{ barassistant_server_container_labels_additional_labels_auto + barassistant_server_container_labels_additional_labels_custom }}"
+barassistant_server_container_labels_additional_labels_auto: []
+barassistant_server_container_labels_additional_labels_custom: []
+
+# A list of extra arguments to pass to the container (`docker create` command)
+barassistant_server_container_extra_arguments: "{{ barassistant_server_container_extra_arguments_auto + barassistant_server_container_extra_arguments_custom }}"
+barassistant_server_container_extra_arguments_auto: []
+barassistant_server_container_extra_arguments_custom: []
+
+# Specifies the value of the `X-XSS-Protection` header
+# Stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.
+#
+# Learn more about it is here:
+# - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
+# - https://portswigger.net/web-security/cross-site-scripting/reflected
+barassistant_server_http_header_xss_protection: "1; mode=block"
+
+# Specifies the value of the `X-Content-Type-Options` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
+barassistant_server_http_header_content_type_options: nosniff
+
+# Specifies the value of the `Content-Security-Policy` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
+barassistant_server_http_header_content_security_policy: frame-ancestors 'self'
+
+# Specifies the value of the `Permissions-Policy` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy
+barassistant_server_http_header_permissions_policy: "{{ 'interest-cohort=()' if barassistant_server_floc_optout_enabled else '' }}"
+
+# Specifies the value of the `Strict-Transport-Security` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+barassistant_server_http_header_strict_transport_security: "max-age=31536000; includeSubDomains{{ '; preload' if barassistant_server_hsts_preload_enabled else '' }}"
+
+# Controls whether to send a "Permissions-Policy interest-cohort=();" header along with all responses
+#
+# Learn more about what it is here:
+# - https://www.eff.org/deeplinks/2021/03/googles-floc-terrible-idea
+# - https://paramdeo.com/blog/opting-your-website-out-of-googles-floc-network
+# - https://amifloced.org/
+#
+# Of course, a better solution is to just stop using browsers (like Chrome), which participate in such tracking practices.
+# See: `barassistant_server_http_header_permissions_policy`
+barassistant_server_floc_optout_enabled: true
+
+# Controls if HSTS preloading is enabled
+#
+# In its strongest and recommended form, the [HSTS policy](https://www.chromium.org/hsts) includes all subdomains, and
+# indicates a willingness to be "preloaded" into browsers:
+# `Strict-Transport-Security: max-age=31536000; includeSubDomains; preload`
+# For more information visit:
+# - https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
+# - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+# - https://hstspreload.org/#opt-in
+# See: `barassistant_http_header_strict_transport_security`
+barassistant_server_hsts_preload_enabled: false
+
+# List of systemd services that the Bar Assistant server systemd service depends on
+barassistant_server_systemd_required_services_list: "{{ barassistant_server_systemd_required_services_list_default + barassistant_server_systemd_required_services_list_auto + barassistant_server_systemd_required_services_list_custom }}"
+barassistant_server_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+barassistant_server_systemd_required_services_list_auto: []
+barassistant_server_systemd_required_services_list_custom: []
+
+# List of systemd services that the Bar Assistant server systemd service wants
+barassistant_server_systemd_wanted_services_list: "{{ barassistant_server_systemd_wanted_services_list_default + barassistant_server_systemd_wanted_services_list_auto + barassistant_server_systemd_wanted_services_list_custom }}"
+barassistant_server_systemd_wanted_services_list_default: []
+barassistant_server_systemd_wanted_services_list_auto: []
+barassistant_server_systemd_wanted_services_list_custom: []
+
+# Controls how long to wait for the container to stop gracefully before killing it.
+barassistant_server_container_stop_grace_time_seconds: "{{ devture_systemd_docker_base_container_stop_grace_time_seconds }}"
+
+# Controls how long the pre-start cleanup should wait for stale container-name release
+# before failing startup explicitly.
+barassistant_server_container_cleanup_timeout_seconds: "{{ devture_systemd_docker_base_container_cleanup_timeout_seconds }}"
+
+# Controls the delay between pre-start cleanup retries.
+barassistant_server_container_cleanup_retry_delay_seconds: "{{ devture_systemd_docker_base_container_cleanup_retry_delay_seconds }}"
+
+# Shell command used in the systemd pre-start phase to deterministically remove a stale
+# container and wait until Docker releases its name.
+barassistant_server_container_cleanup_command: |
+  i=0;
+  while [ "$i" -lt {{ barassistant_server_container_cleanup_timeout_seconds }} ]; do
+  {{ devture_systemd_docker_base_host_command_docker }} stop -t {{ barassistant_server_container_stop_grace_time_seconds }} {{ barassistant_server_identifier }} >/dev/null 2>&1 || true;
+  {{ devture_systemd_docker_base_host_command_docker }} rm -f {{ barassistant_server_identifier }} >/dev/null 2>&1 || true;
+  if {{ devture_systemd_docker_base_host_command_docker }} container inspect {{ barassistant_server_identifier }} >/dev/null 2>&1; then
+  i=$((i + 1));
+  sleep {{ barassistant_server_container_cleanup_retry_delay_seconds }};
+  continue;
+  fi;
+  if {{ devture_systemd_docker_base_host_command_docker }} info >/dev/null 2>&1; then
+  exit 0;
+  fi;
+  echo "Failed to query Docker daemon while cleaning up {{ barassistant_server_identifier }}" >&2;
+  exit 1;
+  done;
+  echo "Failed to remove stale container {{ barassistant_server_identifier }} after {{ barassistant_server_container_cleanup_timeout_seconds }} attempts" >&2;
+  exit 1
+
+barassistant_redis_hostname: ""
+
+# Specify the timezone
+barassistant_server_environment_variables_tz: UTC
+
+# Specify a Meilisearch hostname to enable the search and filtering functions
+barassistant_server_environment_variables_meilisearch_host: ""
+
+# Specify a Meilisearch API key to enable the search and filtering functions
+# Note that the default Admin API Key is sufficient for using Meilisearch on the service
+barassistant_server_environment_variables_meilisearch_key: ""
+
+# Control if the /metrics endpoint for Prometheus is enabled
+barassistant_server_environment_variables_metrics_enabled: false
+
+# Specify a comma-separated list of IP addresses allowed to access metrics endpoint
+barassistant_server_environment_variables_metrics_allowed_ips: ""
+
+# Specify Traefik container name
+barassistant_server_traefik_name: ""
+
+# Control if user registration is allowed
+barassistant_server_environment_variables_allow_registration: false
+
+# Specify mailer driver
+# Valid values: log, smtp
+barassistant_server_environment_variables_mail_mailer: ""
+
+# Specify SMTP server hostname
+barassistant_server_environment_variables_mail_host: ""
+
+# Specify SMTP server port
+barassistant_server_environment_variables_mail_port: 587
+
+# Specify SMTP server encryption
+# Set `tls` to enable TLS encryption
+barassistant_server_environment_variables_mail_encryption: ""
+
+# Specify SMTP server username
+barassistant_server_environment_variables_mail_username: ""
+
+# Specify SMTP server password
+barassistant_server_environment_variables_mail_password: ""
+
+# Specify the email address that emails will be sent from
+barassistant_server_environment_variables_mail_from_address: ""
+
+# Specify the name that emails will be sent from
+barassistant_server_environment_variables_mail_from_name: ""
+
+# Control if debug mode is enabled
+barassistant_server_environment_variables_app_debug: false
+
+# Additional environment variables.
+barassistant_server_environment_variables_additional_variables: ""
+
+########################################################################
+#                                                                      #
+# /server                                                              #
+#                                                                      #
+########################################################################

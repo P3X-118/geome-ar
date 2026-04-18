@@ -1,0 +1,105 @@
+{#
+SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
+SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+SPDX-FileCopyrightText: 2025 Suguru Hirahara
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+#}
+
+{% if barassistant_server_container_labels_traefik_enabled %}
+traefik.enable=true
+
+{% if barassistant_server_container_labels_traefik_docker_network %}
+traefik.docker.network={{ barassistant_server_container_labels_traefik_docker_network }}
+{% endif %}
+
+{% set middlewares = [] %}
+
+{#
+  Refer to https://docs.barassistant.app/setup/#reverse-proxy-configuration
+#}
+{% if barassistant_server_container_labels_traefik_path_prefix != '/' %}
+traefik.http.middlewares.{{ barassistant_server_identifier }}-strip-prefix.stripprefix.prefixes={{ barassistant_server_container_labels_traefik_path_prefix }}
+{% set middlewares = middlewares + [barassistant_server_identifier + '-strip-prefix'] %}
+{% endif %}
+
+{% if barassistant_server_container_labels_traefik_additional_request_headers.keys() | length > 0 %}
+{% for name, value in barassistant_server_container_labels_traefik_additional_request_headers.items() %}
+traefik.http.middlewares.{{ barassistant_server_identifier }}-add-request-headers.headers.customrequestheaders.{{ name }}={{ value }}
+{% endfor %}
+{% set middlewares = middlewares + [barassistant_server_identifier + '-add-request-headers'] %}
+{% endif %}
+
+{% if barassistant_server_container_labels_traefik_additional_response_headers.keys() | length > 0 %}
+{% for name, value in barassistant_server_container_labels_traefik_additional_response_headers.items() %}
+traefik.http.middlewares.{{ barassistant_server_identifier }}-add-response-headers.headers.customresponseheaders.{{ name }}={{ value }}
+{% endfor %}
+{% set middlewares = middlewares + [barassistant_server_identifier + '-add-response-headers'] %}
+{% endif %}
+
+traefik.http.routers.{{ barassistant_server_identifier }}.rule={{ barassistant_server_container_labels_traefik_rule }}
+{% if barassistant_server_container_labels_traefik_priority | int > 0 %}
+traefik.http.routers.{{ barassistant_server_identifier }}.priority={{ barassistant_server_container_labels_traefik_priority }}
+{% endif %}
+traefik.http.routers.{{ barassistant_server_identifier }}.service={{ barassistant_server_identifier }}
+{% if middlewares | length > 0 %}
+traefik.http.routers.{{ barassistant_server_identifier }}.middlewares={{ middlewares | join(',') }}
+{% endif %}
+traefik.http.routers.{{ barassistant_server_identifier }}.entrypoints={{ barassistant_server_container_labels_traefik_entrypoints }}
+traefik.http.routers.{{ barassistant_server_identifier }}.tls={{ barassistant_server_container_labels_traefik_tls | to_json }}
+{% if barassistant_server_container_labels_traefik_tls %}
+traefik.http.routers.{{ barassistant_server_identifier }}.tls.certResolver={{ barassistant_server_container_labels_traefik_tls_certResolver }}
+{% endif %}
+
+traefik.http.services.{{ barassistant_server_identifier }}.loadbalancer.server.port={{ barassistant_server_container_http_port }}
+
+{% if barassistant_server_container_labels_traefik_metrics_enabled %}
+########################################################################
+#                                                                      #
+# Metrics                                                              #
+#                                                                      #
+########################################################################
+
+{% set middlewares = barassistant_server_container_labels_traefik_metrics_middlewares %}
+
+{% if barassistant_server_container_labels_traefik_metrics_middleware_basic_auth_enabled %}
+traefik.http.middlewares.{{ barassistant_server_identifier }}-metrics-basic-auth.basicauth.users={{ barassistant_server_container_labels_traefik_metrics_middleware_basic_auth_users }}
+{% set middlewares = middlewares + [barassistant_server_identifier + '-metrics-basic-auth'] %}
+{% endif %}
+
+traefik.http.middlewares.{{ barassistant_server_identifier }}-metrics-replace-path.replacepath.path=/metrics
+{% set middlewares = middlewares + [barassistant_server_identifier + '-metrics-replace-path'] %}
+
+traefik.http.routers.{{ barassistant_server_identifier }}-metrics.rule={{ barassistant_server_container_labels_traefik_metrics_rule }}
+
+{% if barassistant_server_container_labels_traefik_metrics_priority | int > 0 %}
+traefik.http.routers.{{ barassistant_server_identifier }}-metrics.priority={{ barassistant_server_container_labels_traefik_metrics_priority }}
+{% endif %}
+
+traefik.http.routers.{{ barassistant_server_identifier }}-metrics.service={{ barassistant_server_identifier }}-metrics
+
+{% if middlewares | length > 0 %}
+traefik.http.routers.{{ barassistant_server_identifier }}-metrics.middlewares={{ middlewares | join(',') }}
+{% endif %}
+
+traefik.http.routers.{{ barassistant_server_identifier }}-metrics.entrypoints={{ barassistant_server_container_labels_traefik_metrics_entrypoints }}
+
+traefik.http.routers.{{ barassistant_server_identifier }}-metrics.tls={{ barassistant_server_container_labels_traefik_metrics_tls | to_json }}
+{% if barassistant_server_container_labels_traefik_metrics_tls %}
+traefik.http.routers.{{ barassistant_server_identifier }}-metrics.tls.certResolver={{ barassistant_server_container_labels_traefik_metrics_tls_certResolver }}
+{% endif %}
+
+traefik.http.services.{{ barassistant_server_identifier }}-metrics.loadbalancer.server.port={{ barassistant_server_container_http_port }}
+
+########################################################################
+#                                                                      #
+# /Metrics                                                             #
+#                                                                      #
+########################################################################
+{% endif %}
+
+{% endif %}
+
+{% for arg in barassistant_server_container_labels_additional_labels %}
+{{ arg }}
+{% endfor %}

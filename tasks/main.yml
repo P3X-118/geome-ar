@@ -1,0 +1,28 @@
+# SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Perform Bar Assistant installation tasks
+  when: barassistant_enabled | bool
+  tags:
+    - setup-all
+    - setup-barassistant
+    - install-all
+    - install-barassistant
+  block:
+    - name: Validate Bar Assistant configuration
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+    - name: Install Bar Assistant
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+
+- name: Perform Bar Assistant uninstallation tasks
+  when: not barassistant_enabled | bool
+  tags:
+    - setup-all
+    - setup-barassistant
+  block:
+    - name: Uninstall Bar Assistant
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"

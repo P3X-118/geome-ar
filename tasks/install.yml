@@ -1,0 +1,116 @@
+# SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
+# SPDX-FileCopyrightText: 2023 MASH project contributors
+# SPDX-FileCopyrightText: 2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Ensure Bar Assistant paths exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0750"
+    owner: "{{ barassistant_uid }}"
+    group: "{{ barassistant_gid }}"
+  with_items:
+    - "{{ barassistant_base_path }}"
+    - "{{ barassistant_saltrim_base_path }}"
+    - "{{ barassistant_server_base_path }}"
+
+- name: Ensure Bar Assistant server data path exists
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0750"
+    owner: "33" # Fixed value: https://docs.barassistant.app/setup/
+    group: "33" # Fixed value: https://docs.barassistant.app/setup/
+  with_items:
+    - "{{ barassistant_server_data_path }}"
+
+- name: Ensure Bar Assistant support files installed
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "0640"
+    owner: "{{ barassistant_uid }}"
+    group: "{{ barassistant_gid }}"
+  with_items:
+    - { src: "{{ role_path }}/templates/labels_saltrim.j2", dest: "{{ barassistant_saltrim_base_path }}/labels" }
+    - { src: "{{ role_path }}/templates/labels_server.j2", dest: "{{ barassistant_server_base_path }}/labels" }
+    - { src: "{{ role_path }}/templates/env_saltrim.j2", dest: "{{ barassistant_saltrim_base_path }}/env" }
+    - { src: "{{ role_path }}/templates/env_server.j2", dest: "{{ barassistant_server_base_path }}/env" }
+  register: barassistant_support_files_result
+
+- name: Run if Traefik is enabled for Prometheus endpoint
+  # This task updates the IP address allowed to access to the metrics by Bar Assistant server.
+  when: barassistant_server_environment_variables_metrics_enabled | bool and barassistant_server_environment_variables_metrics_allowed_ips == ''
+  block:
+    - name: Check IPv4Address of the Traefik network in Docker for Bar Assistant server metrics
+      ansible.builtin.shell:
+        cmd: |
+          set -o pipefail
+          {{ devture_systemd_docker_base_host_command_docker }} inspect traefik | grep -A 5 '{{ barassistant_server_traefik_name }}' | grep 'IPv4Address' | awk '{%raw%}{print $2}{%endraw%}' | tr -d '\" ' | cut -d'/' -f1
+        executable: /bin/bash
+      register: barassistant_server_traefik_ipv4address
+      changed_when: false
+
+    - name: Ensure the IPv4Address allowed to access to the metrics by Bar Assistant server is updated
+      ansible.builtin.replace:
+        path: "{{ barassistant_server_base_path }}/env"
+        regexp: "METRICS_ALLOWED_IPS=(|.*?)"
+        replace: "METRICS_ALLOWED_IPS={{ barassistant_server_traefik_ipv4address.stdout }}"
+
+- name: Ensure Bar Assistant container images are pulled
+  community.docker.docker_image:
+    name: "{{ item.image }}"
+    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+  with_items:
+    - { image: "{{ barassistant_saltrim_container_image }}" }
+    - { image: "{{ barassistant_server_container_image }}" }
+  register: barassistant_container_image_pull_result
+  retries: "{{ devture_playbook_help_container_retries_count }}"
+  delay: "{{ devture_playbook_help_container_retries_delay }}"
+  until: barassistant_container_image_pull_result is not failed
+
+- name: Ensure Bar Assistant container network is created via community.docker.docker_network
+  when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
+  community.docker.docker_network:
+    enable_ipv6: "{{ devture_systemd_docker_base_ipv6_enabled }}"
+    name: "{{ barassistant_container_network }}"
+    driver: bridge
+    driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
+  register: barassistant_network_creation_result
+
+- name: Ensure Bar Assistant container network is created via ansible.builtin.command
+  when: devture_systemd_docker_base_container_network_creation_method == 'command'
+  ansible.builtin.command:
+    cmd: >-
+      {{ devture_systemd_docker_base_host_command_docker }} network create
+      {% if devture_systemd_docker_base_ipv6_enabled %}--ipv6{% endif %}
+      {{ devture_systemd_docker_base_container_networks_driver_options_string }}
+      {{ barassistant_container_network }}
+  register: barassistant_network_creation_result
+  changed_when: barassistant_network_creation_result.rc == 0
+  failed_when: barassistant_network_creation_result.rc != 0 and 'already exists' not in barassistant_network_creation_result.stderr
+
+- name: Ensure Bar Assistant systemd services are present
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "0644"
+  with_items:
+    - src: "{{ role_path }}/templates/systemd/barassistant-saltrim.service.j2"
+      dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ barassistant_saltrim_identifier }}.service"
+    - src: "{{ role_path }}/templates/systemd/barassistant-server.service.j2"
+      dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ barassistant_server_identifier }}.service"
+  register: barassistant_systemd_services_result
+
+- name: Determine whether Bar Assistant needs a restart
+  ansible.builtin.set_fact:
+    barassistant_restart_necessary: >-
+      {{
+        barassistant_support_files_result.changed | default(false)
+        or barassistant_systemd_services_result.changed | default(false)
+        or barassistant_container_image_pull_result.changed | default(false)
+      }}
