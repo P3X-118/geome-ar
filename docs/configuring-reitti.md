@@ -24,7 +24,7 @@ This is an [Ansible](https://www.ansible.com/) role which installs [Reitti](http
 
 Reitti is a service for managing cocktail recipes at your home bar with a lot of cocktail-oriented features like ingredient substitutes.
 
-The role is configured to set up the Reitti's API server and its web client software [Salt Rim](https://github.com/karlomikus/vue-salt-rim).
+The role is configured to set up the Reitti's API server and its web client software [Reitti](https://github.com/karlomikus/vue-salt-rim).
 
 See the project's [documentation](https://docs.reitti.app/) to learn what Reitti does and why it might be useful to you.
 
@@ -173,9 +173,9 @@ If you use the MASH playbook, the shortcut commands with the [`just` program](ht
 
 ## Usage
 
-After running the command for installation, Reitti's API server becomes available at the specified hostname with the subpath like `https://example.com/api`, and the Salt Rim instance becomes available at `https://example.com`.
+After running the command for installation, Reitti's API server becomes available at the specified hostname with the subpath like `https://example.com/api`, and the Reitti instance becomes available at `https://example.com`.
 
-To get started, open the Salt Rim's URL with a web browser, and register the account. **Note that the first registered user becomes an administrator automatically.**
+To get started, open the Reitti's URL with a web browser, and register the account. **Note that the first registered user becomes an administrator automatically.**
 
 Since account registration is disabled by default, you need to enable it first by setting `reitti_tilecache_environment_variables_allow_registration` to `true` temporarily in order to create your own account.
 
@@ -183,4 +183,4 @@ Since account registration is disabled by default, you need to enable it first b
 
 ### Check the service's logs
 
-You can find the logs in [systemd-journald](https://www.freedesktop.org/software/systemd/man/systemd-journald.service.html) by logging in to the server with SSH, and running `journalctl -fu reitti-tilecache` (or how you/your playbook named the service, e.g. `mash-reitti-tilecache`) for the tile cache server and `journalctl -fu reitti` (or how you/your playbook named the service, e.g. `mash-reitti`) for the Salt Rim instance, respectively.
+You can find the logs in [systemd-journald](https://www.freedesktop.org/software/systemd/man/systemd-journald.service.html) by logging in to the server with SSH, and running `journalctl -fu reitti-tilecache` (or how you/your playbook named the service, e.g. `mash-reitti-tilecache`) for the tile cache server and `journalctl -fu reitti` (or how you/your playbook named the service, e.g. `mash-reitti`) for the Reitti instance, respectively.

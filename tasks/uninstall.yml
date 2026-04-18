@@ -72,9 +72,9 @@
             ]
           }}
 
-- name: Remove Reitti Salt Rim files
+- name: Remove Reitti files
   block:
-    - name: Ensure Reitti Salt Rim path does not exist
+    - name: Ensure Reitti path does not exist
       ansible.builtin.file:
         path: "{{ reitti_base_path }}"
         state: absent

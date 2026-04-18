@@ -57,7 +57,7 @@ reitti_scheme: https
 
 reitti_hostname: "{{ reitti_hostname }}"
 
-# The path at which Salt Rim is exposed
+# The path at which Reitti is exposed
 reitti_path_prefix: "/"
 
 reitti_container_image: "{{ reitti_container_image_registry_prefix }}reitti/salt-rim:{{ reitti_container_image_tag }}"
@@ -69,7 +69,7 @@ reitti_container_image_force_pull: "{{ reitti_container_image.endswith(':latest'
 
 reitti_container_network: "{{ reitti_container_network }}"
 
-# Specify how the Salt Rim container publishes its HTTP port (as defined by `reitti_container_http_port`).
+# Specify how the Reitti container publishes its HTTP port (as defined by `reitti_container_http_port`).
 #
 # Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:2586"), or empty string to not expose.
 reitti_container_http_host_bind_port: ""
@@ -192,7 +192,7 @@ reitti_floc_optout_enabled: true
 # See: `reitti_http_header_strict_transport_security`
 reitti_hsts_preload_enabled: false
 
-# List of systemd services that the Reitti Salt Rim systemd service depends on
+# List of systemd services that the Reitti systemd service depends on
 reitti_systemd_required_services_list: "{{ reitti_systemd_required_services_list_default + reitti_systemd_required_services_list_auto + reitti_systemd_required_services_list_custom }}"
 reitti_systemd_required_services_list_default: |
   {{
@@ -203,7 +203,7 @@ reitti_systemd_required_services_list_default: |
 reitti_systemd_required_services_list_auto: []
 reitti_systemd_required_services_list_custom: []
 
-# List of systemd services that the Reitti Salt Rim systemd service wants
+# List of systemd services that the Reitti systemd service wants
 reitti_systemd_wanted_services_list: "{{ reitti_systemd_wanted_services_list_default + reitti_systemd_wanted_services_list_auto + reitti_systemd_wanted_services_list_custom }}"
 reitti_systemd_wanted_services_list_default: []
 reitti_systemd_wanted_services_list_auto: []

@@ -81,10 +81,10 @@
           reitti_tilecache_container_labels_traefik_metrics_path_prefix (`{{ reitti_tilecache_container_labels_traefik_metrics_path_prefix }}`) must either be `/` or not end with a slash (e.g. `/metrics`).
       when: "reitti_tilecache_container_labels_traefik_metrics_path_prefix != '/' and reitti_tilecache_container_labels_traefik_metrics_path_prefix[-1] == '/'"
 
-- name: Run if Traefik is enabled for Salt Rim
+- name: Run if Traefik is enabled for Reitti
   when: reitti_container_labels_traefik_enabled | bool
   block:
-    - name: Fail if Traefik settings required for Reitti Salt Rim are not defined
+    - name: Fail if Traefik settings required for Reitti are not defined
       ansible.builtin.fail:
         msg: >-
           You need to define a required configuration setting (`{{ item }}`).

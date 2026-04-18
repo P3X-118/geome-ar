@@ -7,7 +7,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 #}
 
 [Unit]
-Description=Reitti Salt Rim ({{ reitti_identifier }})
+Description=Reitti ({{ reitti_identifier }})
 {% for service in reitti_systemd_required_services_list %}
 Requires={{ service }}
 After={{ service }}
