@@ -20,13 +20,11 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 # Setting up Reitti
 
-This is an [Ansible](https://www.ansible.com/) role which installs [Reitti](https://github.com/karlomikus/bar-assistant/) API server and the web client to run as [Docker](https://www.docker.com/) containers wrapped in systemd services.
+This is an [Ansible](https://www.ansible.com/) role which installs [Reitti](https://www.dedicatedcode.com/projects/reitti/) and its tile cache server to run as [Docker](https://www.docker.com/) containers wrapped in systemd services.
 
-Reitti is a service for managing cocktail recipes at your home bar with a lot of cocktail-oriented features like ingredient substitutes.
+Reitti is a personal location tracking and analysis application.
 
-The role is configured to set up the Reitti's API server and its web client software [Reitti](https://github.com/karlomikus/vue-salt-rim).
-
-See the project's [documentation](https://docs.reitti.app/) to learn what Reitti does and why it might be useful to you.
+See the project's [documentation](https://www.dedicatedcode.com/projects/reitti/) to learn what Reitti does and why it might be useful to you.
 
 ## Prerequisites
 
@@ -117,14 +115,12 @@ If you use the MASH playbook, the shortcut commands with the [`just` program](ht
 
 ## Usage
 
-After running the command for installation, Reitti's API server becomes available at the specified hostname with the subpath like `https://example.com/api`, and the Reitti instance becomes available at `https://example.com`.
+After running the command for installation, Reitti becomes available at the specified hostname like `https://example.com`.
 
-To get started, open the Reitti's URL with a web browser, and register the account. **Note that the first registered user becomes an administrator automatically.**
-
-Since account registration is disabled by default, you need to enable it first by setting `reitti_tilecache_environment_variables_allow_registration` to `true` temporarily in order to create your own account.
+To get started, open the URL with a web browser, and register the account. **Note that the first registered user becomes an administrator automatically.**
 
 ## Troubleshooting
 
 ### Check the service's logs
 
-You can find the logs in [systemd-journald](https://www.freedesktop.org/software/systemd/man/systemd-journald.service.html) by logging in to the server with SSH, and running `journalctl -fu reitti-tilecache` (or how you/your playbook named the service, e.g. `mash-reitti-tilecache`) for the tile cache server and `journalctl -fu reitti` (or how you/your playbook named the service, e.g. `mash-reitti`) for the Reitti instance, respectively.
+You can find the logs in [systemd-journald](https://www.freedesktop.org/software/systemd/man/systemd-journald.service.html) by logging in to the server with SSH, and running `journalctl -fu reitti` (or how you/your playbook named the service, e.g. `mash-reitti`) for the Reitti instance and `journalctl -fu reitti-tilecache` (or how you/your playbook named the service, e.g. `mash-reitti-tilecache`) for the tile cache server, respectively.

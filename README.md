@@ -8,7 +8,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 # Reitti Ansible role
 
-This is an [Ansible](https://www.ansible.com/) role which installs [Reitti](https://github.com/karlomikus/bar-assistant/) API server and the web client to run as [Docker](https://www.docker.com/) containers wrapped in systemd services.
+This is an [Ansible](https://www.ansible.com/) role which installs [Reitti](https://www.dedicatedcode.com/projects/reitti/) and its tile cache server to run as [Docker](https://www.docker.com/) containers wrapped in systemd services.
 
 This role *implicitly* depends on:
 
@@ -16,8 +16,6 @@ This role *implicitly* depends on:
 - [`com.devture.ansible.role.systemd_docker_base`](https://github.com/devture/com.devture.ansible.role.systemd_docker_base)
 
 Check [`defaults/main.yml`](defaults/main.yml) for the full list of supported options. Refer to [this page](docs/configuring-reitti.md) for details about setting up the service with this role.
-
-💡 For an Ansible playbook which integrates this role and makes it easier to use, see the [Mother-of-All-Self-Hosting Ansible playbook](https://app.radicle.xyz/nodes/seed.radicle.garden/rad%3Az2SXkaceJw3YmS89T1xGysnFSjWsw).
 
 ## Development
 
