@@ -7,7 +7,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-# Project source code URL: https://github.com/karlomikus/bar-assistant
+# Project source code URL: https://github.com/dedicatedcode/reitti
 
 reitti_enabled: true
 
@@ -50,8 +50,8 @@ reitti_restart_necessary: false
 #                                                                      #
 ########################################################################
 
-# renovate: datasource=docker depName=reitti/salt-rim
-reitti_version: 4.14.1
+# renovate: datasource=docker depName=dedicatedcode/reitti
+reitti_version: 4.0.0
 
 reitti_scheme: https
 
@@ -60,7 +60,7 @@ reitti_hostname: "{{ reitti_hostname }}"
 # The path at which Reitti is exposed
 reitti_path_prefix: "/"
 
-reitti_container_image: "{{ reitti_container_image_registry_prefix }}reitti/salt-rim:{{ reitti_container_image_tag }}"
+reitti_container_image: "{{ reitti_container_image_registry_prefix }}dedicatedcode/reitti:{{ reitti_container_image_tag }}"
 reitti_container_image_tag: "{{ reitti_version }}"
 reitti_container_image_registry_prefix: "{{ reitti_container_image_registry_prefix_upstream }}"
 reitti_container_image_registry_prefix_upstream: "{{ reitti_container_image_registry_prefix_upstream_default }}"
@@ -266,8 +266,8 @@ reitti_environment_variables_additional_variables: ""
 
 reitti_tilecache_identifier: "{{ reitti_identifier }}-server"
 
-# renovate: datasource=docker depName=reitti/server
-reitti_tilecache_version: 5.13.2
+# renovate: datasource=docker depName=dedicatedcode/reitti-tile-cache
+reitti_tilecache_version: 4.0.0
 
 reitti_tilecache_scheme: https
 
@@ -276,7 +276,7 @@ reitti_tilecache_hostname: "{{ reitti_hostname }}"
 # The path at which Reitti tile cache server is exposed
 reitti_tilecache_path_prefix: "/bar"
 
-reitti_tilecache_container_image: "{{ reitti_tilecache_container_image_registry_prefix }}reitti/server:{{ reitti_tilecache_container_image_tag }}"
+reitti_tilecache_container_image: "{{ reitti_tilecache_container_image_registry_prefix }}dedicatedcode/reitti-tile-cache:{{ reitti_tilecache_container_image_tag }}"
 reitti_tilecache_container_image_tag: "{{ reitti_tilecache_version }}"
 reitti_tilecache_container_image_registry_prefix: "{{ reitti_tilecache_container_image_registry_prefix_upstream }}"
 reitti_tilecache_container_image_registry_prefix_upstream: "{{ reitti_tilecache_container_image_registry_prefix_upstream_default }}"
