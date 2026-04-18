@@ -37,9 +37,9 @@
     group: "{{ barassistant_gid }}"
   with_items:
     - { src: "{{ role_path }}/templates/labels.j2", dest: "{{ reitti_base_path }}/labels" }
-    - { src: "{{ role_path }}/templates/labels_server.j2", dest: "{{ reitti_tilecache_base_path }}/labels" }
+    - { src: "{{ role_path }}/templates/labels_tilecache.j2", dest: "{{ reitti_tilecache_base_path }}/labels" }
     - { src: "{{ role_path }}/templates/env.j2", dest: "{{ reitti_base_path }}/env" }
-    - { src: "{{ role_path }}/templates/env_server.j2", dest: "{{ reitti_tilecache_base_path }}/env" }
+    - { src: "{{ role_path }}/templates/env_tilecache.j2", dest: "{{ reitti_tilecache_base_path }}/env" }
   register: barassistant_support_files_result
 
 - name: Run if Traefik is enabled for Prometheus endpoint
@@ -102,7 +102,7 @@
   with_items:
     - src: "{{ role_path }}/templates/systemd/reitti.service.j2"
       dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ reitti_identifier }}.service"
-    - src: "{{ role_path }}/templates/systemd/barassistant-server.service.j2"
+    - src: "{{ role_path }}/templates/systemd/reitti-tilecache.service.j2"
       dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ reitti_tilecache_identifier }}.service"
   register: barassistant_systemd_services_result
 
