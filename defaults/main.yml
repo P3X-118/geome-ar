@@ -234,9 +234,9 @@ reitti_container_cleanup_command: |
 # Specify database configuration
 reitti_database_hostname: ""
 reitti_database_port: 5432
-reitti_database_username: reittidb
+reitti_database_username: reitti
 reitti_database_password: ""
-reitti_database_name: reittidb
+reitti_database_name: reitti
 
 # Specify Redis configuration
 reitti_redis_hostname: ""
