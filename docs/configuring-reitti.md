@@ -183,4 +183,4 @@ Since account registration is disabled by default, you need to enable it first b
 
 ### Check the service's logs
 
-You can find the logs in [systemd-journald](https://www.freedesktop.org/software/systemd/man/systemd-journald.service.html) by logging in to the server with SSH, and running `journalctl -fu reitti-server` (or how you/your playbook named the service, e.g. `mash-reitti-server`) for the API server and `journalctl -fu reitti-saltrim` (or how you/your playbook named the service, e.g. `mash-reitti-saltrim`) for the Salt Rim instance, respectively.
+You can find the logs in [systemd-journald](https://www.freedesktop.org/software/systemd/man/systemd-journald.service.html) by logging in to the server with SSH, and running `journalctl -fu reitti-server` (or how you/your playbook named the service, e.g. `mash-reitti-server`) for the API server and `journalctl -fu reitti` (or how you/your playbook named the service, e.g. `mash-reitti`) for the Salt Rim instance, respectively.

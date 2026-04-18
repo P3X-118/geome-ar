@@ -13,7 +13,7 @@ reitti_enabled: true
 
 reitti_identifier: reitti
 reitti_base_path: "/{{ reitti_identifier }}"
-reitti_base_path: "{{ reitti_base_path }}/saltrim"
+reitti_base_path: "{{ reitti_base_path }}/reitti"
 reitti_tilecache_base_path: "{{ reitti_base_path }}/server"
 reitti_tilecache_data_path: "{{ reitti_tilecache_base_path }}/data"
 
@@ -47,11 +47,11 @@ reitti_restart_necessary: false
 
 ########################################################################
 #                                                                      #
-# saltrim                                                              #
+# reitti                                                               #
 #                                                                      #
 ########################################################################
 
-reitti_identifier: "{{ reitti_identifier }}-saltrim"
+reitti_identifier: reitti
 
 # renovate: datasource=docker depName=reitti/salt-rim
 reitti_version: 4.14.1
@@ -103,7 +103,7 @@ reitti_container_additional_volumes_custom: []
 reitti_container_labels_traefik_enabled: true
 reitti_container_labels_traefik_docker_network: "{{ reitti_container_network }}"
 reitti_container_labels_traefik_hostname: "{{ reitti_hostname }}"
-# The path prefix must either be `/` or not end with a slash (e.g. `/reitti-saltrim`).
+# The path prefix must either be `/` or not end with a slash (e.g. `/reitti`).
 reitti_container_labels_traefik_path_prefix: "{{ reitti_path_prefix }}"
 reitti_container_labels_traefik_rule: "Host(`{{ reitti_container_labels_traefik_hostname }}`){% if reitti_container_labels_traefik_path_prefix != '/' %} && PathPrefix(`{{ reitti_container_labels_traefik_path_prefix }}`){% endif %}"
 reitti_container_labels_traefik_priority: 0
@@ -257,7 +257,7 @@ reitti_environment_variables_additional_variables: ""
 
 ########################################################################
 #                                                                      #
-# /saltrim                                                             #
+# /reitti                                                              #
 #                                                                      #
 ########################################################################
 
