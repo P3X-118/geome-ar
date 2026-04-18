@@ -22,11 +22,14 @@ Type=simple
 Environment="HOME={{ devture_systemd_docker_base_systemd_unit_home_path }}"
 ExecStartPre={{ devture_systemd_docker_base_host_command_sh }} -c '{{ reitti_container_cleanup_command | trim | replace("\n", " ") }}'
 
+{#
+  Running as root with additional capabilities is required for starting Reitti.
+#}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       --rm \
       --name={{ reitti_identifier }} \
       --log-driver=none \
-      --cap-drop=ALL \
+      --user=0:0 \
       --network={{ reitti_container_network }} \
       {% if reitti_container_http_host_bind_port %}
       -p {{ reitti_container_http_host_bind_port }}:{{ reitti_container_http_port }} \
