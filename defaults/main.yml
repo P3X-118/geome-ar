@@ -20,20 +20,11 @@ reitti_tilecache_data_path: "{{ reitti_tilecache_base_path }}/data"
 reitti_uid: ""
 reitti_gid: ""
 
-# The hostname at which Reitti is served.
-reitti_hostname: ""
-
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 reitti_container_network: "{{ reitti_identifier }}"
 
 # Control if the container network is deleted on uninstalling.
 reitti_container_network_deletion_enabled: true
-
-# Specify the Reitti server instance URL
-reitti_environment_variables_server_url: "{{ reitti_tilecache_scheme }}://{{ reitti_hostname }}{{ reitti_tilecache_path_prefix }}"
-
-# Specify APP_URL
-reitti_environment_variables_app_url: "{{ reitti_environment_variables_server_url }}"
 
 # reitti_restart_necessary controls whether the Reitti systemd
 # services will be restarted (when true) or merely started (when false) by the
@@ -56,7 +47,8 @@ reitti_version: 4.0.0
 
 reitti_scheme: https
 
-reitti_hostname: "{{ reitti_hostname }}"
+# The hostname at which Reitti is served.
+reitti_hostname: ""
 
 # The path at which Reitti is exposed
 reitti_path_prefix: "/"
@@ -67,8 +59,6 @@ reitti_container_image_registry_prefix: "{{ reitti_container_image_registry_pref
 reitti_container_image_registry_prefix_upstream: "{{ reitti_container_image_registry_prefix_upstream_default }}"
 reitti_container_image_registry_prefix_upstream_default: docker.io/
 reitti_container_image_force_pull: "{{ reitti_container_image.endswith(':latest') }}"
-
-reitti_container_network: "{{ reitti_container_network }}"
 
 # Specify how the Reitti container publishes its HTTP port (as defined by `reitti_container_http_port`).
 #
@@ -241,14 +231,24 @@ reitti_container_cleanup_command: |
   echo "Failed to remove stale container {{ reitti_identifier }} after {{ reitti_container_cleanup_timeout_seconds }} attempts" >&2;
   exit 1
 
-# Control if mailer is enabled
-reitti_mailer_enabled: false
+# Specify database configuration
+reitti_database_hostname: ""
+reitti_database_port: 5432
+reitti_database_username: reittidb
+reitti_database_password: ""
+reitti_database_name: reittidb
+
+# Specify Redis configuration
+reitti_redis_hostname: ""
+reitti_redis_port: 6379
+reitti_redis_username: ""
+reitti_redis_password: ""
+reitti_redis_database: "0"
 
 # Specify the timezone
 reitti_environment_variables_tz: UTC
 
-# Specify the Meilisearch server instance URL to enable the search and filtering functions
-reitti_environment_variables_meilisearch_url: ""
+reitti_environment_variables_logging_level: INFO
 
 # Additional environment variables.
 reitti_environment_variables_additional_variables: ""
@@ -265,17 +265,17 @@ reitti_environment_variables_additional_variables: ""
 #                                                                      #
 ########################################################################
 
-reitti_tilecache_identifier: "{{ reitti_identifier }}-server"
+reitti_tilecache_identifier: "{{ reitti_identifier }}-tilecache"
 
 # renovate: datasource=docker depName=dedicatedcode/reitti-tile-cache
 reitti_tilecache_version: 4.0.0
 
-reitti_tilecache_scheme: https
+reitti_tilecache_scheme: http
 
 reitti_tilecache_hostname: "{{ reitti_hostname }}"
 
 # The path at which Reitti tile cache server is exposed
-reitti_tilecache_path_prefix: "/bar"
+reitti_tilecache_path_prefix: "/"
 
 reitti_tilecache_container_image: "{{ reitti_tilecache_container_image_registry_prefix }}dedicatedcode/reitti-tile-cache:{{ reitti_tilecache_container_image_tag }}"
 reitti_tilecache_container_image_tag: "{{ reitti_tilecache_version }}"
@@ -467,58 +467,8 @@ reitti_tilecache_container_cleanup_command: |
   echo "Failed to remove stale container {{ reitti_tilecache_identifier }} after {{ reitti_tilecache_container_cleanup_timeout_seconds }} attempts" >&2;
   exit 1
 
-reitti_redis_hostname: ""
-
 # Specify the timezone
 reitti_tilecache_environment_variables_tz: UTC
-
-# Specify a Meilisearch hostname to enable the search and filtering functions
-reitti_tilecache_environment_variables_meilisearch_host: ""
-
-# Specify a Meilisearch API key to enable the search and filtering functions
-# Note that the default Admin API Key is sufficient for using Meilisearch on the service
-reitti_tilecache_environment_variables_meilisearch_key: ""
-
-# Control if the /metrics endpoint for Prometheus is enabled
-reitti_tilecache_environment_variables_metrics_enabled: false
-
-# Specify a comma-separated list of IP addresses allowed to access metrics endpoint
-reitti_tilecache_environment_variables_metrics_allowed_ips: ""
-
-# Specify Traefik container name
-reitti_tilecache_traefik_name: ""
-
-# Control if user registration is allowed
-reitti_tilecache_environment_variables_allow_registration: false
-
-# Specify mailer driver
-# Valid values: log, smtp
-reitti_tilecache_environment_variables_mail_mailer: ""
-
-# Specify SMTP server hostname
-reitti_tilecache_environment_variables_mail_host: ""
-
-# Specify SMTP server port
-reitti_tilecache_environment_variables_mail_port: 587
-
-# Specify SMTP server encryption
-# Set `tls` to enable TLS encryption
-reitti_tilecache_environment_variables_mail_encryption: ""
-
-# Specify SMTP server username
-reitti_tilecache_environment_variables_mail_username: ""
-
-# Specify SMTP server password
-reitti_tilecache_environment_variables_mail_password: ""
-
-# Specify the email address that emails will be sent from
-reitti_tilecache_environment_variables_mail_from_address: ""
-
-# Specify the name that emails will be sent from
-reitti_tilecache_environment_variables_mail_from_name: ""
-
-# Control if debug mode is enabled
-reitti_tilecache_environment_variables_app_debug: false
 
 # Additional environment variables.
 reitti_tilecache_environment_variables_additional_variables: ""

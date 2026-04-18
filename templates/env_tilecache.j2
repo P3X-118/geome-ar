@@ -8,44 +8,4 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 TZ={{ reitti_tilecache_environment_variables_tz }}
 
-API_URL={{ reitti_environment_variables_server_url }}
-
-APP_URL={{ reitti_environment_variables_app_url }}
-
-{% if reitti_tilecache_environment_variables_meilisearch_host != '' %}
-MEILISEARCH_HOST={{ reitti_tilecache_environment_variables_meilisearch_host }}
-MEILISEARCH_KEY={{ reitti_tilecache_environment_variables_meilisearch_key }}
-{% endif %}
-
-METRICS_ENABLED={{ reitti_tilecache_environment_variables_metrics_enabled | to_json }}
-METRICS_ALLOWED_IPS={{ reitti_tilecache_environment_variables_metrics_allowed_ips }}
-
-{% if reitti_redis_hostname != '' %}
-REDIS_HOST={{ reitti_redis_hostname }}
-CACHE_DRIVER=redis
-SESSION_DRIVER=redis
-{% else %}
-CACHE_DRIVER=file
-SESSION_DRIVER=file
-{% endif %}
-
-ALLOW_REGISTRATION={{ reitti_tilecache_environment_variables_allow_registration | to_json }}
-
-{% if reitti_mailer_enabled %}
-MAIL_MAILER={{ reitti_tilecache_environment_variables_mail_mailer }}
-
-{% if reitti_tilecache_environment_variables_mail_mailer == 'smtp' %}
-MAIL_HOST={{ reitti_tilecache_environment_variables_mail_host }}
-MAIL_PORT={{ reitti_tilecache_environment_variables_mail_port }}
-MAIL_ENCRYPTION={{ reitti_tilecache_environment_variables_mail_encryption }}
-MAIL_USERNAME={{ reitti_tilecache_environment_variables_mail_username }}
-MAIL_PASSWORD={{ reitti_tilecache_environment_variables_mail_password }}
-MAIL_FROM_ADDRESS={{ reitti_tilecache_environment_variables_mail_from_address }}
-MAIL_FROM_NAME={{ reitti_tilecache_environment_variables_mail_from_name }}
-{% endif %}
-
-{% endif %}
-
-APP_DEBUG={{ reitti_tilecache_environment_variables_app_debug | to_json }}
-
 {{ reitti_tilecache_environment_variables_additional_variables }}

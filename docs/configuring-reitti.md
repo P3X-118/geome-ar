@@ -28,6 +28,12 @@ The role is configured to set up the Reitti's API server and its web client soft
 
 See the project's [documentation](https://docs.reitti.app/) to learn what Reitti does and why it might be useful to you.
 
+## Prerequisites
+
+To run a Reitti instance it is necessary to prepare a [Postgres](https://www.postgresql.org/) database server with [PostGIS](https://postgis.net/) extensions installed and [Redis](https://redis.io/) database for managing cache data.
+
+If you are looking for Ansible roles for them, you can check out [ansible-role-postgis](https://github.com/mother-of-all-self-hosting/ansible-role-postgis) and [ansible-role-redis](https://github.com/mother-of-all-self-hosting/ansible-role-redis), both of which are maintained by the [Mother-of-All-Self-Hosting (MASH)](https://github.com/mother-of-all-self-hosting) team. The role for [Valkey](https://valkey.io/) ([ansible-role-valkey](https://github.com/mother-of-all-self-hosting/ansible-role-valkey)) is available as well.
+
 ## Adjusting the playbook configuration
 
 To enable Reitti with this role, add the following configuration to your `vars.yml` file.
@@ -62,90 +68,32 @@ After adjusting the hostname, make sure to adjust your DNS records to point the 
 
 **Note**: hosting Reitti under a subpath (by configuring the `reitti_path_prefix` variable) does not seem to be possible due to Reitti's technical limitations.
 
-### Enabling signing up
+### Set variables for the database server
 
-By default this role is configured to disable signing up for an account on the service. To enable it, add the following configuration to your `vars.yml` file:
-
-```yaml
-reitti_tilecache_environment_variables_allow_registration: true
-```
-
-### Connecting to a Meilisearch instance (optional)
-
-To enable the search and filtering functions, you can optionally have the Reitti instance connect to a Meilisearch instance by adding the following configuration to your `vars.yml` file:
+To have the Reitti instance connect to your Postgres server, add the following configuration to your `vars.yml` file.
 
 ```yaml
-# Specify the Meilisearch server instance URL
-reitti_environment_variables_meilisearch_url: YOUR_MEILISEARCH_INSTANCE_URL_HERE
-
-# Specify a Meilisearch hostname
-reitti_tilecache_environment_variables_meilisearch_host: YOUR_MEILISEARCH_HOSTNAME_HERE
-
-# Specify a Meilisearch API key
-reitti_tilecache_environment_variables_meilisearch_key: YOUR_MEILISEARCH_KEY_HERE
+reitti_database_hostname: YOUR_POSTGRES_SERVER_HOSTNAME_HERE
+reitti_database_port: 5432
+reitti_database_username: YOUR_POSTGRES_SERVER_USERNAME_HERE
+reitti_database_password: YOUR_POSTGRES_SERVER_PASSWORD_HERE
+reitti_database_name: YOUR_POSTGRES_SERVER_DATABASE_NAME_HERE
 ```
 
-You can set the same value to `reitti_environment_variables_meilisearch_url` and `reitti_tilecache_environment_variables_meilisearch_host` if the Meilisearch is not hosted under a subpath.
+Make sure to replace the placeholders with your own values.
 
->[!NOTE]
->
-> - The Meilisearch instance needs to be exposed to the internet.
-> - The default Admin API Key is sufficient for using Meilisearch on a Reitti instance. It is [not recommended](https://www.meilisearch.com/docs/learn/security/basic_security) to use the master key for operations anything but managing other API keys.
+### Configure a Redis database
 
-If you are looking for an Ansible role for Meilisearch, you can check out [ansible-role-meilisearch](https://github.com/mother-of-all-self-hosting/ansible-role-meilisearch) maintained by the [Mother-of-All-Self-Hosting (MASH)](https://github.com/mother-of-all-self-hosting) team.
+It is necessary to set up a Redis database for the Reitti instance. Valkey can also be used instead.
 
-### Configuring a Redis database (optional)
-
-You can optionally enable a [Redis](https://redis.io/) database for the Reitti tile cache server. [Valkey](https://valkey.io/) can also be used instead.
-
-To enable the Redis database for Reitti tile cache server, add the following configuration to your `vars.yml` file:
+To enable the Redis database for Reitti, add the following configuration to your `vars.yml` file:
 
 ```yaml
 reitti_redis_hostname: YOUR_REDIS_SERVER_HOSTNAME_HERE
+reitti_redis_port: 6379
 ```
 
 Make sure to replace `YOUR_REDIS_SERVER_HOSTNAME_HERE` with your own value.
-
-If you are looking for an Ansible role for Redis, you can check out [ansible-role-redis](https://github.com/mother-of-all-self-hosting/ansible-role-redis) maintained by the [Mother-of-All-Self-Hosting (MASH)](https://github.com/mother-of-all-self-hosting) team. The role for Valkey ([ansible-role-valkey](https://github.com/mother-of-all-self-hosting/ansible-role-valkey)) is available as well.
-
-### Configuring a SMTP mailer (optional)
-
-You can configure a SMTP mailer to enable email functions such as password recovery.
-
-To configure it, add the following configuration to your `vars.yml` file as below (adapt to your needs):
-
-```yaml
-reitti_mailer_enabled: true
-
-reitti_tilecache_environment_variables_mail_mailer: smtp
-
-# Specify SMTP server hostname
-reitti_tilecache_environment_variables_mail_host: ""
-
-# Specify SMTP server port
-reitti_tilecache_environment_variables_mail_port: 587
-
-# Specify SMTP server encryption
-# Set `tls` to enable TLS encryption
-reitti_tilecache_environment_variables_mail_encryption: ""
-
-# Specify SMTP server username
-reitti_tilecache_environment_variables_mail_username: ""
-
-# Specify SMTP server password
-reitti_tilecache_environment_variables_mail_password: ""
-
-# Specify the email address that emails will be sent from
-reitti_tilecache_environment_variables_mail_from_address: ""
-
-# Specify the name that emails will be sent from
-reitti_tilecache_environment_variables_mail_from_name: ""
-```
-
-See [this page](https://docs.reitti.app/setup/mailing/) on the official documentation for details.
-
->[!WARNING]
-> Without setting an authentication method such as DKIM, SPF, and DMARC for your hostname, emails are most likely to be quarantined as spam at recipient's mail servers. The worst scenario is that your server's IP address or hostname will be included in the spam list such as the one managed by [Spamhaus](https://www.spamhaus.org/). If you have set up a mail server with the [MASH project's exim-relay Ansible role](https://github.com/mother-of-all-self-hosting/ansible-role-exim-relay), you can enable DKIM signing with it. Refer [its documentation](https://github.com/mother-of-all-self-hosting/ansible-role-exim-relay/blob/main/docs/configuring-exim-relay.md#enable-dkim-support-optional) for details.
 
 ### Integrating with Prometheus (optional)
 
@@ -160,6 +108,8 @@ There are some additional things you may wish to configure about the service.
 Take a look at:
 
 - [`defaults/main.yml`](../defaults/main.yml) for some variables that you can customize via your `vars.yml` file. You can override settings (even those that don't have dedicated playbook variables) using the `reitti_environment_variables_additional_variables` variable
+
+See the [documentation](https://github.com/dedicatedcode/reitti/blob/main/README.md#environment-variables) for a complete list of Reitti's config options that you could put in `reitti_environment_variables_additional_variables`.
 
 ## Installing
 
