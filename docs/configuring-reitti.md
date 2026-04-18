@@ -26,7 +26,7 @@ Reitti is a service for managing cocktail recipes at your home bar with a lot of
 
 The role is configured to set up the Reitti's API server and its web client software [Salt Rim](https://github.com/karlomikus/vue-salt-rim).
 
-See the project's [documentation](https://docs.barassistant.app/) to learn what Reitti does and why it might be useful to you.
+See the project's [documentation](https://docs.reitti.app/) to learn what Reitti does and why it might be useful to you.
 
 ## Adjusting the playbook configuration
 
@@ -37,7 +37,7 @@ To enable Reitti with this role, add the following configuration to your `vars.y
 ```yaml
 ########################################################################
 #                                                                      #
-# barassistant                                                         #
+# reitti                                                               #
 #                                                                      #
 ########################################################################
 
@@ -45,7 +45,7 @@ reitti_enabled: true
 
 ########################################################################
 #                                                                      #
-# /barassistant                                                        #
+# /reitti                                                              #
 #                                                                      #
 ########################################################################
 ```
@@ -142,7 +142,7 @@ reitti_tilecache_environment_variables_mail_from_address: ""
 reitti_tilecache_environment_variables_mail_from_name: ""
 ```
 
-See [this page](https://docs.barassistant.app/setup/mailing/) on the official documentation for details.
+See [this page](https://docs.reitti.app/setup/mailing/) on the official documentation for details.
 
 >[!WARNING]
 > Without setting an authentication method such as DKIM, SPF, and DMARC for your hostname, emails are most likely to be quarantined as spam at recipient's mail servers. The worst scenario is that your server's IP address or hostname will be included in the spam list such as the one managed by [Spamhaus](https://www.spamhaus.org/). If you have set up a mail server with the [MASH project's exim-relay Ansible role](https://github.com/mother-of-all-self-hosting/ansible-role-exim-relay), you can enable DKIM signing with it. Refer [its documentation](https://github.com/mother-of-all-self-hosting/ansible-role-exim-relay/blob/main/docs/configuring-exim-relay.md#enable-dkim-support-optional) for details.
@@ -151,7 +151,7 @@ See [this page](https://docs.barassistant.app/setup/mailing/) on the official do
 
 Reitti server can natively expose metrics to Prometheus.
 
-If you are looking for an integration, you can check out the MASH playbook. See [this section of the documentation on the playbook](https://github.com/mother-of-all-self-hosting/mash-playbook/blob/main/docs/services/barassistant.md#integrating-with-prometheus-optional) for more information.
+If you are looking for an integration, you can check out the MASH playbook. See [this section of the documentation on the playbook](https://github.com/mother-of-all-self-hosting/mash-playbook/blob/main/docs/services/reitti.md#integrating-with-prometheus-optional) for more information.
 
 ### Extending the configuration
 
@@ -183,4 +183,4 @@ Since account registration is disabled by default, you need to enable it first b
 
 ### Check the service's logs
 
-You can find the logs in [systemd-journald](https://www.freedesktop.org/software/systemd/man/systemd-journald.service.html) by logging in to the server with SSH, and running `journalctl -fu barassistant-server` (or how you/your playbook named the service, e.g. `mash-barassistant-server`) for the API server and `journalctl -fu barassistant-saltrim` (or how you/your playbook named the service, e.g. `mash-barassistant-saltrim`) for the Salt Rim instance, respectively.
+You can find the logs in [systemd-journald](https://www.freedesktop.org/software/systemd/man/systemd-journald.service.html) by logging in to the server with SSH, and running `journalctl -fu reitti-server` (or how you/your playbook named the service, e.g. `mash-reitti-server`) for the API server and `journalctl -fu reitti-saltrim` (or how you/your playbook named the service, e.g. `mash-reitti-saltrim`) for the Salt Rim instance, respectively.

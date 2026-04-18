@@ -56,7 +56,7 @@
     - name: Fail if reitti_tilecache_container_labels_traefik_path_prefix ends with a slash
       ansible.builtin.fail:
         msg: >-
-          reitti_tilecache_container_labels_traefik_path_prefix (`{{ reitti_tilecache_container_labels_traefik_path_prefix }}`) must either be `/` or not end with a slash (e.g. `/barassistant`).
+          reitti_tilecache_container_labels_traefik_path_prefix (`{{ reitti_tilecache_container_labels_traefik_path_prefix }}`) must either be `/` or not end with a slash (e.g. `/reitti`).
       when: "reitti_tilecache_container_labels_traefik_path_prefix != '/' and reitti_tilecache_container_labels_traefik_path_prefix[-1] == '/'"
 
 - name: Run if Traefik is enabled for Prometheus endpoint
@@ -106,5 +106,5 @@
     - name: Fail if reitti_container_labels_traefik_path_prefix ends with a slash
       ansible.builtin.fail:
         msg: >-
-          reitti_container_labels_traefik_path_prefix (`{{ reitti_container_labels_traefik_path_prefix }}`) must either be `/` or not end with a slash (e.g. `/barassistant`).
+          reitti_container_labels_traefik_path_prefix (`{{ reitti_container_labels_traefik_path_prefix }}`) must either be `/` or not end with a slash (e.g. `/reitti`).
       when: "reitti_container_labels_traefik_path_prefix != '/' and reitti_container_labels_traefik_path_prefix[-1] == '/'"

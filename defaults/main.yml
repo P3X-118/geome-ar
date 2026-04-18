@@ -11,7 +11,7 @@
 
 reitti_enabled: true
 
-reitti_identifier: barassistant
+reitti_identifier: reitti
 reitti_base_path: "/{{ reitti_identifier }}"
 reitti_base_path: "{{ reitti_base_path }}/saltrim"
 reitti_tilecache_base_path: "{{ reitti_base_path }}/server"
@@ -53,7 +53,7 @@ reitti_restart_necessary: false
 
 reitti_identifier: "{{ reitti_identifier }}-saltrim"
 
-# renovate: datasource=docker depName=barassistant/salt-rim
+# renovate: datasource=docker depName=reitti/salt-rim
 reitti_version: 4.14.1
 
 reitti_scheme: https
@@ -63,7 +63,7 @@ reitti_hostname: "{{ reitti_hostname }}"
 # The path at which Salt Rim is exposed
 reitti_path_prefix: "/"
 
-reitti_container_image: "{{ reitti_container_image_registry_prefix }}barassistant/salt-rim:{{ reitti_container_image_tag }}"
+reitti_container_image: "{{ reitti_container_image_registry_prefix }}reitti/salt-rim:{{ reitti_container_image_tag }}"
 reitti_container_image_tag: "{{ reitti_version }}"
 reitti_container_image_registry_prefix: "{{ reitti_container_image_registry_prefix_upstream }}"
 reitti_container_image_registry_prefix_upstream: "{{ reitti_container_image_registry_prefix_upstream_default }}"
@@ -103,7 +103,7 @@ reitti_container_additional_volumes_custom: []
 reitti_container_labels_traefik_enabled: true
 reitti_container_labels_traefik_docker_network: "{{ reitti_container_network }}"
 reitti_container_labels_traefik_hostname: "{{ reitti_hostname }}"
-# The path prefix must either be `/` or not end with a slash (e.g. `/barassistant-saltrim`).
+# The path prefix must either be `/` or not end with a slash (e.g. `/reitti-saltrim`).
 reitti_container_labels_traefik_path_prefix: "{{ reitti_path_prefix }}"
 reitti_container_labels_traefik_rule: "Host(`{{ reitti_container_labels_traefik_hostname }}`){% if reitti_container_labels_traefik_path_prefix != '/' %} && PathPrefix(`{{ reitti_container_labels_traefik_path_prefix }}`){% endif %}"
 reitti_container_labels_traefik_priority: 0
@@ -269,7 +269,7 @@ reitti_environment_variables_additional_variables: ""
 
 reitti_tilecache_identifier: "{{ reitti_identifier }}-server"
 
-# renovate: datasource=docker depName=barassistant/server
+# renovate: datasource=docker depName=reitti/server
 reitti_tilecache_version: 5.13.2
 
 reitti_tilecache_scheme: https
@@ -279,7 +279,7 @@ reitti_tilecache_hostname: "{{ reitti_hostname }}"
 # The path at which the server is exposed
 reitti_tilecache_path_prefix: "/bar"
 
-reitti_tilecache_container_image: "{{ reitti_tilecache_container_image_registry_prefix }}barassistant/server:{{ reitti_tilecache_container_image_tag }}"
+reitti_tilecache_container_image: "{{ reitti_tilecache_container_image_registry_prefix }}reitti/server:{{ reitti_tilecache_container_image_tag }}"
 reitti_tilecache_container_image_tag: "{{ reitti_tilecache_version }}"
 reitti_tilecache_container_image_registry_prefix: "{{ reitti_tilecache_container_image_registry_prefix_upstream }}"
 reitti_tilecache_container_image_registry_prefix_upstream: "{{ reitti_tilecache_container_image_registry_prefix_upstream_default }}"

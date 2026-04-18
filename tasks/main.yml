@@ -9,9 +9,9 @@
   when: reitti_enabled | bool
   tags:
     - setup-all
-    - setup-barassistant
+    - setup-reitti
     - install-all
-    - install-barassistant
+    - install-reitti
   block:
     - name: Validate Reitti configuration
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
@@ -22,7 +22,7 @@
   when: not reitti_enabled | bool
   tags:
     - setup-all
-    - setup-barassistant
+    - setup-reitti
   block:
     - name: Uninstall Reitti
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"

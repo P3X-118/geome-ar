@@ -23,8 +23,8 @@
     path: "{{ item }}"
     state: directory
     mode: "0750"
-    owner: "33" # Fixed value: https://docs.barassistant.app/setup/
-    group: "33" # Fixed value: https://docs.barassistant.app/setup/
+    owner: "33" # Fixed value: https://docs.reitti.app/setup/
+    group: "33" # Fixed value: https://docs.reitti.app/setup/
   with_items:
     - "{{ reitti_tilecache_data_path }}"
 

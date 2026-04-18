@@ -16,7 +16,7 @@ traefik.docker.network={{ reitti_tilecache_container_labels_traefik_docker_netwo
 {% set middlewares = [] %}
 
 {#
-  Refer to https://docs.barassistant.app/setup/#reverse-proxy-configuration
+  Refer to https://docs.reitti.app/setup/#reverse-proxy-configuration
 #}
 {% if reitti_tilecache_container_labels_traefik_path_prefix != '/' %}
 traefik.http.middlewares.{{ reitti_tilecache_identifier }}-strip-prefix.stripprefix.prefixes={{ reitti_tilecache_container_labels_traefik_path_prefix }}
