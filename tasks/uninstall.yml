@@ -9,7 +9,8 @@
   with_items:
     - service: "{{ reitti_identifier }}.service"
       path: "{{ devture_systemd_docker_base_systemd_path }}/{{ reitti_identifier }}.service"
-    - { service: "{{ reitti_tilecache_identifier }}.service", path: "{{ devture_systemd_docker_base_systemd_path }}/{{ reitti_tilecache_identifier }}.service" }
+    - service: "{{ reitti_tilecache_identifier }}.service"
+      path: "{{ devture_systemd_docker_base_systemd_path }}/{{ reitti_tilecache_identifier }}.service"
 
 - name: Ensure Reitti container network does not exist
   when: reitti_container_network_deletion_enabled
