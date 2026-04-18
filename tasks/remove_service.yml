@@ -7,10 +7,10 @@
 - name: "Check existence of Reitti systemd service — {{ item.service }}"
   ansible.builtin.stat:
     path: "{{ item.path }}"
-  register: barassistant_service_stat
+  register: reitti_service_stat
 
 - name: Uninstall Reitti systemd service
-  when: barassistant_service_stat.stat.exists | bool
+  when: reitti_service_stat.stat.exists | bool
   block:
     - name: Ensure the systemd service is stopped
       ansible.builtin.service:

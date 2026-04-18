@@ -8,9 +8,9 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 TZ={{ reitti_tilecache_environment_variables_tz }}
 
-API_URL={{ barassistant_environment_variables_server_url }}
+API_URL={{ reitti_environment_variables_server_url }}
 
-APP_URL={{ barassistant_environment_variables_app_url }}
+APP_URL={{ reitti_environment_variables_app_url }}
 
 {% if reitti_tilecache_environment_variables_meilisearch_host != '' %}
 MEILISEARCH_HOST={{ reitti_tilecache_environment_variables_meilisearch_host }}
@@ -20,8 +20,8 @@ MEILISEARCH_KEY={{ reitti_tilecache_environment_variables_meilisearch_key }}
 METRICS_ENABLED={{ reitti_tilecache_environment_variables_metrics_enabled | to_json }}
 METRICS_ALLOWED_IPS={{ reitti_tilecache_environment_variables_metrics_allowed_ips }}
 
-{% if barassistant_redis_hostname != '' %}
-REDIS_HOST={{ barassistant_redis_hostname }}
+{% if reitti_redis_hostname != '' %}
+REDIS_HOST={{ reitti_redis_hostname }}
 CACHE_DRIVER=redis
 SESSION_DRIVER=redis
 {% else %}
@@ -31,7 +31,7 @@ SESSION_DRIVER=file
 
 ALLOW_REGISTRATION={{ reitti_tilecache_environment_variables_allow_registration | to_json }}
 
-{% if barassistant_mailer_enabled %}
+{% if reitti_mailer_enabled %}
 MAIL_MAILER={{ reitti_tilecache_environment_variables_mail_mailer }}
 
 {% if reitti_tilecache_environment_variables_mail_mailer == 'smtp' %}

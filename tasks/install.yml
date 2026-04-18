@@ -11,10 +11,10 @@
     path: "{{ item }}"
     state: directory
     mode: "0750"
-    owner: "{{ barassistant_uid }}"
-    group: "{{ barassistant_gid }}"
+    owner: "{{ reitti_uid }}"
+    group: "{{ reitti_gid }}"
   with_items:
-    - "{{ barassistant_base_path }}"
+    - "{{ reitti_base_path }}"
     - "{{ reitti_base_path }}"
     - "{{ reitti_tilecache_base_path }}"
 
@@ -33,14 +33,14 @@
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
     mode: "0640"
-    owner: "{{ barassistant_uid }}"
-    group: "{{ barassistant_gid }}"
+    owner: "{{ reitti_uid }}"
+    group: "{{ reitti_gid }}"
   with_items:
     - { src: "{{ role_path }}/templates/labels.j2", dest: "{{ reitti_base_path }}/labels" }
     - { src: "{{ role_path }}/templates/labels_tilecache.j2", dest: "{{ reitti_tilecache_base_path }}/labels" }
     - { src: "{{ role_path }}/templates/env.j2", dest: "{{ reitti_base_path }}/env" }
     - { src: "{{ role_path }}/templates/env_tilecache.j2", dest: "{{ reitti_tilecache_base_path }}/env" }
-  register: barassistant_support_files_result
+  register: reitti_support_files_result
 
 - name: Run if Traefik is enabled for Prometheus endpoint
   # This task updates the IP address allowed to access to the metrics by Reitti server.
@@ -68,19 +68,19 @@
   with_items:
     - { image: "{{ reitti_container_image }}" }
     - { image: "{{ reitti_tilecache_container_image }}" }
-  register: barassistant_container_image_pull_result
+  register: reitti_container_image_pull_result
   retries: "{{ devture_playbook_help_container_retries_count }}"
   delay: "{{ devture_playbook_help_container_retries_delay }}"
-  until: barassistant_container_image_pull_result is not failed
+  until: reitti_container_image_pull_result is not failed
 
 - name: Ensure Reitti container network is created via community.docker.docker_network
   when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
   community.docker.docker_network:
     enable_ipv6: "{{ devture_systemd_docker_base_ipv6_enabled }}"
-    name: "{{ barassistant_container_network }}"
+    name: "{{ reitti_container_network }}"
     driver: bridge
     driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
-  register: barassistant_network_creation_result
+  register: reitti_network_creation_result
 
 - name: Ensure Reitti container network is created via ansible.builtin.command
   when: devture_systemd_docker_base_container_network_creation_method == 'command'
@@ -89,10 +89,10 @@
       {{ devture_systemd_docker_base_host_command_docker }} network create
       {% if devture_systemd_docker_base_ipv6_enabled %}--ipv6{% endif %}
       {{ devture_systemd_docker_base_container_networks_driver_options_string }}
-      {{ barassistant_container_network }}
-  register: barassistant_network_creation_result
-  changed_when: barassistant_network_creation_result.rc == 0
-  failed_when: barassistant_network_creation_result.rc != 0 and 'already exists' not in barassistant_network_creation_result.stderr
+      {{ reitti_container_network }}
+  register: reitti_network_creation_result
+  changed_when: reitti_network_creation_result.rc == 0
+  failed_when: reitti_network_creation_result.rc != 0 and 'already exists' not in reitti_network_creation_result.stderr
 
 - name: Ensure Reitti systemd services are present
   ansible.builtin.template:
@@ -104,13 +104,13 @@
       dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ reitti_identifier }}.service"
     - src: "{{ role_path }}/templates/systemd/reitti-tilecache.service.j2"
       dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ reitti_tilecache_identifier }}.service"
-  register: barassistant_systemd_services_result
+  register: reitti_systemd_services_result
 
 - name: Determine whether Reitti needs a restart
   ansible.builtin.set_fact:
-    barassistant_restart_necessary: >-
+    reitti_restart_necessary: >-
       {{
-        barassistant_support_files_result.changed | default(false)
-        or barassistant_systemd_services_result.changed | default(false)
-        or barassistant_container_image_pull_result.changed | default(false)
+        reitti_support_files_result.changed | default(false)
+        or reitti_systemd_services_result.changed | default(false)
+        or reitti_container_image_pull_result.changed | default(false)
       }}

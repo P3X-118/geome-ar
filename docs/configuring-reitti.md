@@ -41,7 +41,7 @@ To enable Reitti with this role, add the following configuration to your `vars.y
 #                                                                      #
 ########################################################################
 
-barassistant_enabled: true
+reitti_enabled: true
 
 ########################################################################
 #                                                                      #
@@ -55,12 +55,12 @@ barassistant_enabled: true
 To enable Reitti you need to set the hostname as well. To do so, add the following configuration to your `vars.yml` file. Make sure to replace `example.com` with your own value.
 
 ```yaml
-barassistant_hostname: "example.com"
+reitti_hostname: "example.com"
 ```
 
 After adjusting the hostname, make sure to adjust your DNS records to point the domain to your server.
 
-**Note**: hosting Reitti under a subpath (by configuring the `barassistant_path_prefix` variable) does not seem to be possible due to Reitti's technical limitations.
+**Note**: hosting Reitti under a subpath (by configuring the `reitti_path_prefix` variable) does not seem to be possible due to Reitti's technical limitations.
 
 ### Enabling signing up
 
@@ -101,7 +101,7 @@ You can optionally enable a [Redis](https://redis.io/) database for the Reitti s
 To enable the Redis database for Reitti server, add the following configuration to your `vars.yml` file:
 
 ```yaml
-barassistant_redis_hostname: YOUR_REDIS_SERVER_HOSTNAME_HERE
+reitti_redis_hostname: YOUR_REDIS_SERVER_HOSTNAME_HERE
 ```
 
 Make sure to replace `YOUR_REDIS_SERVER_HOSTNAME_HERE` with your own value.
@@ -115,7 +115,7 @@ You can configure a SMTP mailer to enable email functions such as password recov
 To configure it, add the following configuration to your `vars.yml` file as below (adapt to your needs):
 
 ```yaml
-barassistant_mailer_enabled: true
+reitti_mailer_enabled: true
 
 reitti_tilecache_environment_variables_mail_mailer: smtp
 
@@ -159,7 +159,7 @@ There are some additional things you may wish to configure about the service.
 
 Take a look at:
 
-- [`defaults/main.yml`](../defaults/main.yml) for some variables that you can customize via your `vars.yml` file. You can override settings (even those that don't have dedicated playbook variables) using the `barassistant_environment_variables_additional_variables` variable
+- [`defaults/main.yml`](../defaults/main.yml) for some variables that you can customize via your `vars.yml` file. You can override settings (even those that don't have dedicated playbook variables) using the `reitti_environment_variables_additional_variables` variable
 
 ## Installing
 

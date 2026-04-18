@@ -11,14 +11,14 @@
       You need to define a required configuration setting (`{{ item }}`).
   when: "lookup('vars', item, default='') | string | length == 0"
   with_items:
-    - barassistant_uid
-    - barassistant_gid
-    - barassistant_hostname
+    - reitti_uid
+    - reitti_gid
+    - reitti_hostname
     - reitti_path_prefix
-    - barassistant_container_network
+    - reitti_container_network
 
 - name: Run if mailer is enabled
-  when: barassistant_mailer_enabled
+  when: reitti_mailer_enabled
   block:
     - name: Fail if Reitti server mailer driver is invalid
       ansible.builtin.fail:

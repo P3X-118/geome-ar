@@ -9,33 +9,33 @@
 ---
 # Project source code URL: https://github.com/karlomikus/bar-assistant
 
-barassistant_enabled: true
+reitti_enabled: true
 
-barassistant_identifier: barassistant
-barassistant_base_path: "/{{ barassistant_identifier }}"
-reitti_base_path: "{{ barassistant_base_path }}/saltrim"
-reitti_tilecache_base_path: "{{ barassistant_base_path }}/server"
+reitti_identifier: barassistant
+reitti_base_path: "/{{ reitti_identifier }}"
+reitti_base_path: "{{ reitti_base_path }}/saltrim"
+reitti_tilecache_base_path: "{{ reitti_base_path }}/server"
 reitti_tilecache_data_path: "{{ reitti_tilecache_base_path }}/data"
 
-barassistant_uid: ""
-barassistant_gid: ""
+reitti_uid: ""
+reitti_gid: ""
 
 # The hostname at which Reitti is served.
-barassistant_hostname: ""
+reitti_hostname: ""
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.
-barassistant_container_network: "{{ barassistant_identifier }}"
+reitti_container_network: "{{ reitti_identifier }}"
 
 # Control if the container network is deleted on uninstalling.
-barassistant_container_network_deletion_enabled: true
+reitti_container_network_deletion_enabled: true
 
 # Specify the Reitti server instance URL
-barassistant_environment_variables_server_url: "{{ reitti_tilecache_scheme }}://{{ barassistant_hostname }}{{ reitti_tilecache_path_prefix }}"
+reitti_environment_variables_server_url: "{{ reitti_tilecache_scheme }}://{{ reitti_hostname }}{{ reitti_tilecache_path_prefix }}"
 
 # Specify APP_URL
-barassistant_environment_variables_app_url: "{{ barassistant_environment_variables_server_url }}"
+reitti_environment_variables_app_url: "{{ reitti_environment_variables_server_url }}"
 
-# barassistant_restart_necessary controls whether the Reitti systemd
+# reitti_restart_necessary controls whether the Reitti systemd
 # services will be restarted (when true) or merely started (when false) by the
 # systemd service manager role (when conditional restart is enabled).
 #
@@ -43,7 +43,7 @@ barassistant_environment_variables_app_url: "{{ barassistant_environment_variabl
 # any configuration files, the systemd service file, or the container image changed.
 # The default of `false` means "no restart needed" — appropriate when the role's
 # installation tasks haven't run (e.g., due to --tags skipping them).
-barassistant_restart_necessary: false
+reitti_restart_necessary: false
 
 ########################################################################
 #                                                                      #
@@ -51,14 +51,14 @@ barassistant_restart_necessary: false
 #                                                                      #
 ########################################################################
 
-reitti_identifier: "{{ barassistant_identifier }}-saltrim"
+reitti_identifier: "{{ reitti_identifier }}-saltrim"
 
 # renovate: datasource=docker depName=barassistant/salt-rim
 reitti_version: 4.14.1
 
 reitti_scheme: https
 
-reitti_hostname: "{{ barassistant_hostname }}"
+reitti_hostname: "{{ reitti_hostname }}"
 
 # The path at which Salt Rim is exposed
 reitti_path_prefix: "/"
@@ -70,7 +70,7 @@ reitti_container_image_registry_prefix_upstream: "{{ reitti_container_image_regi
 reitti_container_image_registry_prefix_upstream_default: docker.io/
 reitti_container_image_force_pull: "{{ reitti_container_image.endswith(':latest') }}"
 
-reitti_container_network: "{{ barassistant_container_network }}"
+reitti_container_network: "{{ reitti_container_network }}"
 
 # Specify how the Salt Rim container publishes its HTTP port (as defined by `reitti_container_http_port`).
 #
@@ -192,7 +192,7 @@ reitti_floc_optout_enabled: true
 # - https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
 # - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
 # - https://hstspreload.org/#opt-in
-# See: `barassistant_http_header_strict_transport_security`
+# See: `reitti_http_header_strict_transport_security`
 reitti_hsts_preload_enabled: false
 
 # List of systemd services that the Reitti Salt Rim systemd service depends on
@@ -244,7 +244,7 @@ reitti_container_cleanup_command: |
   exit 1
 
 # Control if mailer is enabled
-barassistant_mailer_enabled: false
+reitti_mailer_enabled: false
 
 # Specify the timezone
 reitti_environment_variables_tz: UTC
@@ -267,14 +267,14 @@ reitti_environment_variables_additional_variables: ""
 #                                                                      #
 ########################################################################
 
-reitti_tilecache_identifier: "{{ barassistant_identifier }}-server"
+reitti_tilecache_identifier: "{{ reitti_identifier }}-server"
 
 # renovate: datasource=docker depName=barassistant/server
 reitti_tilecache_version: 5.13.2
 
 reitti_tilecache_scheme: https
 
-reitti_tilecache_hostname: "{{ barassistant_hostname }}"
+reitti_tilecache_hostname: "{{ reitti_hostname }}"
 
 # The path at which the server is exposed
 reitti_tilecache_path_prefix: "/bar"
@@ -286,7 +286,7 @@ reitti_tilecache_container_image_registry_prefix_upstream: "{{ reitti_tilecache_
 reitti_tilecache_container_image_registry_prefix_upstream_default: docker.io/
 reitti_tilecache_container_image_force_pull: "{{ reitti_container_image.endswith(':latest') }}"
 
-reitti_tilecache_container_network: "{{ barassistant_container_network }}"
+reitti_tilecache_container_network: "{{ reitti_container_network }}"
 
 # Specify how the server container publishes its HTTP port (as defined by `reitti_tilecache_container_http_port`).
 #
@@ -423,7 +423,7 @@ reitti_tilecache_floc_optout_enabled: true
 # - https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
 # - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
 # - https://hstspreload.org/#opt-in
-# See: `barassistant_http_header_strict_transport_security`
+# See: `reitti_http_header_strict_transport_security`
 reitti_tilecache_hsts_preload_enabled: false
 
 # List of systemd services that the Reitti server systemd service depends on
@@ -469,7 +469,7 @@ reitti_tilecache_container_cleanup_command: |
   echo "Failed to remove stale container {{ reitti_tilecache_identifier }} after {{ reitti_tilecache_container_cleanup_timeout_seconds }} attempts" >&2;
   exit 1
 
-barassistant_redis_hostname: ""
+reitti_redis_hostname: ""
 
 # Specify the timezone
 reitti_tilecache_environment_variables_tz: UTC

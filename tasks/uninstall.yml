@@ -12,12 +12,12 @@
     - { service: "{{ reitti_tilecache_identifier }}.service", path: "{{ devture_systemd_docker_base_systemd_path }}/{{ reitti_tilecache_identifier }}.service" }
 
 - name: Ensure Reitti container network does not exist
-  when: barassistant_container_network_deletion_enabled
+  when: reitti_container_network_deletion_enabled
   block:
     - name: Ensure Reitti container network does not exist via community.docker.docker_network
       when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
       community.docker.docker_network:
-        name: "{{ barassistant_container_network }}"
+        name: "{{ reitti_container_network }}"
         state: absent
 
     - name: Ensure Reitti container network does not exist via ansible.builtin.command
@@ -25,10 +25,10 @@
       ansible.builtin.command:
         cmd: >-
           {{ devture_systemd_docker_base_host_command_docker }} network rm
-          {{ barassistant_container_network }}
+          {{ reitti_container_network }}
       register: network_deletion_result
       failed_when: network_deletion_result.rc > 0 and 'not found' not in network_deletion_result.stderr
-      changed_when: barassistant_container_network in network_deletion_result.stdout
+      changed_when: reitti_container_network in network_deletion_result.stdout
 
 - name: Remove Reitti server files
   block:

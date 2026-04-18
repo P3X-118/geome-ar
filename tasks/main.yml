@@ -6,7 +6,7 @@
 
 ---
 - name: Perform Reitti installation tasks
-  when: barassistant_enabled | bool
+  when: reitti_enabled | bool
   tags:
     - setup-all
     - setup-barassistant
@@ -19,7 +19,7 @@
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
 
 - name: Perform Reitti uninstallation tasks
-  when: not barassistant_enabled | bool
+  when: not reitti_enabled | bool
   tags:
     - setup-all
     - setup-barassistant
