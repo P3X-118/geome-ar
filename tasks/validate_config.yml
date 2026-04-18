@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
 # SPDX-FileCopyrightText: 2023 Slavi Pantaleev
-# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-- name: Fail if required Bar Assistant settings not defined
+- name: Fail if required Reitti settings not defined
   ansible.builtin.fail:
     msg: >-
       You need to define a required configuration setting (`{{ item }}`).
@@ -20,7 +20,7 @@
 - name: Run if mailer is enabled
   when: barassistant_mailer_enabled
   block:
-    - name: Fail if Bar Assistant server mailer driver is invalid
+    - name: Fail if Reitti server mailer driver is invalid
       ansible.builtin.fail:
         msg: >-
           barassistant_server_environment_variables_mail_mailer must be 'log' or 'smtp'
@@ -41,7 +41,7 @@
 - name: Run if Traefik is enabled for the server
   when: barassistant_server_container_labels_traefik_enabled | bool
   block:
-    - name: Fail if Traefik settings required for Bar Assistant server are not defined
+    - name: Fail if Traefik settings required for Reitti server are not defined
       ansible.builtin.fail:
         msg: >-
           You need to define a required configuration setting (`{{ item }}`).
@@ -84,7 +84,7 @@
 - name: Run if Traefik is enabled for Salt Rim
   when: barassistant_saltrim_container_labels_traefik_enabled | bool
   block:
-    - name: Fail if Traefik settings required for Bar Assistant Salt Rim are not defined
+    - name: Fail if Traefik settings required for Reitti Salt Rim are not defined
       ansible.builtin.fail:
         msg: >-
           You need to define a required configuration setting (`{{ item }}`).
@@ -97,7 +97,7 @@
       ansible.builtin.fail:
         msg: >-
           barassistant_saltrim_container_labels_traefik_path_prefix (`{{ barassistant_saltrim_container_labels_traefik_path_prefix }}`) must be `/`.
-          Bar Assistant does not support hosting under a subpath yet.
+          Reitti does not support hosting under a subpath yet.
       when: "barassistant_saltrim_container_labels_traefik_path_prefix != '/'"
 
     # We ensure it doesn't end with a slash, because we handle both (slash and no-slash).

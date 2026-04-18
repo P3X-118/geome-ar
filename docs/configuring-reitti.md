@@ -18,19 +18,19 @@ SPDX-FileCopyrightText: 2024-2026 Suguru Hirahara
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-# Setting up Bar Assistant
+# Setting up Reitti
 
-This is an [Ansible](https://www.ansible.com/) role which installs [Bar Assistant](https://github.com/karlomikus/bar-assistant/) API server and the web client to run as [Docker](https://www.docker.com/) containers wrapped in systemd services.
+This is an [Ansible](https://www.ansible.com/) role which installs [Reitti](https://github.com/karlomikus/bar-assistant/) API server and the web client to run as [Docker](https://www.docker.com/) containers wrapped in systemd services.
 
-Bar Assistant is a service for managing cocktail recipes at your home bar with a lot of cocktail-oriented features like ingredient substitutes.
+Reitti is a service for managing cocktail recipes at your home bar with a lot of cocktail-oriented features like ingredient substitutes.
 
-The role is configured to set up the Bar Assistant's API server and its web client software [Salt Rim](https://github.com/karlomikus/vue-salt-rim).
+The role is configured to set up the Reitti's API server and its web client software [Salt Rim](https://github.com/karlomikus/vue-salt-rim).
 
-See the project's [documentation](https://docs.barassistant.app/) to learn what Bar Assistant does and why it might be useful to you.
+See the project's [documentation](https://docs.barassistant.app/) to learn what Reitti does and why it might be useful to you.
 
 ## Adjusting the playbook configuration
 
-To enable Bar Assistant with this role, add the following configuration to your `vars.yml` file.
+To enable Reitti with this role, add the following configuration to your `vars.yml` file.
 
 **Note**: the path should be something like `inventory/host_vars/mash.example.com/vars.yml` if you use the [MASH Ansible playbook](https://github.com/mother-of-all-self-hosting/mash-playbook).
 
@@ -52,7 +52,7 @@ barassistant_enabled: true
 
 ### Set the hostname
 
-To enable Bar Assistant you need to set the hostname as well. To do so, add the following configuration to your `vars.yml` file. Make sure to replace `example.com` with your own value.
+To enable Reitti you need to set the hostname as well. To do so, add the following configuration to your `vars.yml` file. Make sure to replace `example.com` with your own value.
 
 ```yaml
 barassistant_hostname: "example.com"
@@ -60,7 +60,7 @@ barassistant_hostname: "example.com"
 
 After adjusting the hostname, make sure to adjust your DNS records to point the domain to your server.
 
-**Note**: hosting Bar Assistant under a subpath (by configuring the `barassistant_path_prefix` variable) does not seem to be possible due to Bar Assistant's technical limitations.
+**Note**: hosting Reitti under a subpath (by configuring the `barassistant_path_prefix` variable) does not seem to be possible due to Reitti's technical limitations.
 
 ### Enabling signing up
 
@@ -72,7 +72,7 @@ barassistant_server_environment_variables_allow_registration: true
 
 ### Connecting to a Meilisearch instance (optional)
 
-To enable the search and filtering functions, you can optionally have the Bar Assistant instance connect to a Meilisearch instance by adding the following configuration to your `vars.yml` file:
+To enable the search and filtering functions, you can optionally have the Reitti instance connect to a Meilisearch instance by adding the following configuration to your `vars.yml` file:
 
 ```yaml
 # Specify the Meilisearch server instance URL
@@ -90,15 +90,15 @@ You can set the same value to `barassistant_saltrim_environment_variables_meilis
 >[!NOTE]
 >
 > - The Meilisearch instance needs to be exposed to the internet.
-> - The default Admin API Key is sufficient for using Meilisearch on a Bar Assistant instance. It is [not recommended](https://www.meilisearch.com/docs/learn/security/basic_security) to use the master key for operations anything but managing other API keys.
+> - The default Admin API Key is sufficient for using Meilisearch on a Reitti instance. It is [not recommended](https://www.meilisearch.com/docs/learn/security/basic_security) to use the master key for operations anything but managing other API keys.
 
 If you are looking for an Ansible role for Meilisearch, you can check out [ansible-role-meilisearch](https://github.com/mother-of-all-self-hosting/ansible-role-meilisearch) maintained by the [Mother-of-All-Self-Hosting (MASH)](https://github.com/mother-of-all-self-hosting) team.
 
 ### Configuring a Redis database (optional)
 
-You can optionally enable a [Redis](https://redis.io/) database for the Bar Assistant server. [Valkey](https://valkey.io/) can also be used instead.
+You can optionally enable a [Redis](https://redis.io/) database for the Reitti server. [Valkey](https://valkey.io/) can also be used instead.
 
-To enable the Redis database for Bar Assistant server, add the following configuration to your `vars.yml` file:
+To enable the Redis database for Reitti server, add the following configuration to your `vars.yml` file:
 
 ```yaml
 barassistant_redis_hostname: YOUR_REDIS_SERVER_HOSTNAME_HERE
@@ -149,7 +149,7 @@ See [this page](https://docs.barassistant.app/setup/mailing/) on the official do
 
 ### Integrating with Prometheus (optional)
 
-Bar Assistant server can natively expose metrics to Prometheus.
+Reitti server can natively expose metrics to Prometheus.
 
 If you are looking for an integration, you can check out the MASH playbook. See [this section of the documentation on the playbook](https://github.com/mother-of-all-self-hosting/mash-playbook/blob/main/docs/services/barassistant.md#integrating-with-prometheus-optional) for more information.
 
@@ -173,7 +173,7 @@ If you use the MASH playbook, the shortcut commands with the [`just` program](ht
 
 ## Usage
 
-After running the command for installation, Bar Assistant's API server becomes available at the specified hostname with the subpath like `https://example.com/api`, and the Salt Rim instance becomes available at `https://example.com`.
+After running the command for installation, Reitti's API server becomes available at the specified hostname with the subpath like `https://example.com/api`, and the Salt Rim instance becomes available at `https://example.com`.
 
 To get started, open the Salt Rim's URL with a web browser, and register the account. **Note that the first registered user becomes an administrator automatically.**
 

@@ -6,7 +6,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-- name: Ensure Bar Assistant paths exist
+- name: Ensure Reitti paths exist
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
@@ -18,7 +18,7 @@
     - "{{ barassistant_saltrim_base_path }}"
     - "{{ barassistant_server_base_path }}"
 
-- name: Ensure Bar Assistant server data path exists
+- name: Ensure Reitti server data path exists
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
@@ -28,7 +28,7 @@
   with_items:
     - "{{ barassistant_server_data_path }}"
 
-- name: Ensure Bar Assistant support files installed
+- name: Ensure Reitti support files installed
   ansible.builtin.template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
@@ -43,10 +43,10 @@
   register: barassistant_support_files_result
 
 - name: Run if Traefik is enabled for Prometheus endpoint
-  # This task updates the IP address allowed to access to the metrics by Bar Assistant server.
+  # This task updates the IP address allowed to access to the metrics by Reitti server.
   when: barassistant_server_environment_variables_metrics_enabled | bool and barassistant_server_environment_variables_metrics_allowed_ips == ''
   block:
-    - name: Check IPv4Address of the Traefik network in Docker for Bar Assistant server metrics
+    - name: Check IPv4Address of the Traefik network in Docker for Reitti server metrics
       ansible.builtin.shell:
         cmd: |
           set -o pipefail
@@ -55,13 +55,13 @@
       register: barassistant_server_traefik_ipv4address
       changed_when: false
 
-    - name: Ensure the IPv4Address allowed to access to the metrics by Bar Assistant server is updated
+    - name: Ensure the IPv4Address allowed to access to the metrics by Reitti server is updated
       ansible.builtin.replace:
         path: "{{ barassistant_server_base_path }}/env"
         regexp: "METRICS_ALLOWED_IPS=(|.*?)"
         replace: "METRICS_ALLOWED_IPS={{ barassistant_server_traefik_ipv4address.stdout }}"
 
-- name: Ensure Bar Assistant container images are pulled
+- name: Ensure Reitti container images are pulled
   community.docker.docker_image:
     name: "{{ item.image }}"
     source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
@@ -73,7 +73,7 @@
   delay: "{{ devture_playbook_help_container_retries_delay }}"
   until: barassistant_container_image_pull_result is not failed
 
-- name: Ensure Bar Assistant container network is created via community.docker.docker_network
+- name: Ensure Reitti container network is created via community.docker.docker_network
   when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
   community.docker.docker_network:
     enable_ipv6: "{{ devture_systemd_docker_base_ipv6_enabled }}"
@@ -82,7 +82,7 @@
     driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
   register: barassistant_network_creation_result
 
-- name: Ensure Bar Assistant container network is created via ansible.builtin.command
+- name: Ensure Reitti container network is created via ansible.builtin.command
   when: devture_systemd_docker_base_container_network_creation_method == 'command'
   ansible.builtin.command:
     cmd: >-
@@ -94,7 +94,7 @@
   changed_when: barassistant_network_creation_result.rc == 0
   failed_when: barassistant_network_creation_result.rc != 0 and 'already exists' not in barassistant_network_creation_result.stderr
 
-- name: Ensure Bar Assistant systemd services are present
+- name: Ensure Reitti systemd services are present
   ansible.builtin.template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
@@ -106,7 +106,7 @@
       dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ barassistant_server_identifier }}.service"
   register: barassistant_systemd_services_result
 
-- name: Determine whether Bar Assistant needs a restart
+- name: Determine whether Reitti needs a restart
   ansible.builtin.set_fact:
     barassistant_restart_necessary: >-
       {{

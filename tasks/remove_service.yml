@@ -1,15 +1,15 @@
 # SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
-# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-- name: "Check existence of Bar Assistant systemd service — {{ item.service }}"
+- name: "Check existence of Reitti systemd service — {{ item.service }}"
   ansible.builtin.stat:
     path: "{{ item.path }}"
   register: barassistant_service_stat
 
-- name: Uninstall Bar Assistant systemd service
+- name: Uninstall Reitti systemd service
   when: barassistant_service_stat.stat.exists | bool
   block:
     - name: Ensure the systemd service is stopped

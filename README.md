@@ -6,9 +6,9 @@ SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-# Bar Assistant Ansible role
+# Reitti Ansible role
 
-This is an [Ansible](https://www.ansible.com/) role which installs [Bar Assistant](https://github.com/karlomikus/bar-assistant/) API server and the web client to run as [Docker](https://www.docker.com/) containers wrapped in systemd services.
+This is an [Ansible](https://www.ansible.com/) role which installs [Reitti](https://github.com/karlomikus/bar-assistant/) API server and the web client to run as [Docker](https://www.docker.com/) containers wrapped in systemd services.
 
 This role *implicitly* depends on:
 

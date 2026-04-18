@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
 # SPDX-FileCopyrightText: 2023 Slavi Pantaleev
-# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-- name: Perform Bar Assistant installation tasks
+- name: Perform Reitti installation tasks
   when: barassistant_enabled | bool
   tags:
     - setup-all
@@ -13,16 +13,16 @@
     - install-all
     - install-barassistant
   block:
-    - name: Validate Bar Assistant configuration
+    - name: Validate Reitti configuration
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
-    - name: Install Bar Assistant
+    - name: Install Reitti
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
 
-- name: Perform Bar Assistant uninstallation tasks
+- name: Perform Reitti uninstallation tasks
   when: not barassistant_enabled | bool
   tags:
     - setup-all
     - setup-barassistant
   block:
-    - name: Uninstall Bar Assistant
+    - name: Uninstall Reitti
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"

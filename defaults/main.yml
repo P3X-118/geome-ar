@@ -20,7 +20,7 @@ barassistant_server_data_path: "{{ barassistant_server_base_path }}/data"
 barassistant_uid: ""
 barassistant_gid: ""
 
-# The hostname at which Bar Assistant is served.
+# The hostname at which Reitti is served.
 barassistant_hostname: ""
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.
@@ -29,13 +29,13 @@ barassistant_container_network: "{{ barassistant_identifier }}"
 # Control if the container network is deleted on uninstalling.
 barassistant_container_network_deletion_enabled: true
 
-# Specify the Bar Assistant server instance URL
+# Specify the Reitti server instance URL
 barassistant_environment_variables_server_url: "{{ barassistant_server_scheme }}://{{ barassistant_hostname }}{{ barassistant_server_path_prefix }}"
 
 # Specify APP_URL
 barassistant_environment_variables_app_url: "{{ barassistant_environment_variables_server_url }}"
 
-# barassistant_restart_necessary controls whether the Bar Assistant systemd
+# barassistant_restart_necessary controls whether the Reitti systemd
 # services will be restarted (when true) or merely started (when false) by the
 # systemd service manager role (when conditional restart is enabled).
 #
@@ -195,7 +195,7 @@ barassistant_saltrim_floc_optout_enabled: true
 # See: `barassistant_http_header_strict_transport_security`
 barassistant_saltrim_hsts_preload_enabled: false
 
-# List of systemd services that the Bar Assistant Salt Rim systemd service depends on
+# List of systemd services that the Reitti Salt Rim systemd service depends on
 barassistant_saltrim_systemd_required_services_list: "{{ barassistant_saltrim_systemd_required_services_list_default + barassistant_saltrim_systemd_required_services_list_auto + barassistant_saltrim_systemd_required_services_list_custom }}"
 barassistant_saltrim_systemd_required_services_list_default: |
   {{
@@ -206,7 +206,7 @@ barassistant_saltrim_systemd_required_services_list_default: |
 barassistant_saltrim_systemd_required_services_list_auto: []
 barassistant_saltrim_systemd_required_services_list_custom: []
 
-# List of systemd services that the Bar Assistant Salt Rim systemd service wants
+# List of systemd services that the Reitti Salt Rim systemd service wants
 barassistant_saltrim_systemd_wanted_services_list: "{{ barassistant_saltrim_systemd_wanted_services_list_default + barassistant_saltrim_systemd_wanted_services_list_auto + barassistant_saltrim_systemd_wanted_services_list_custom }}"
 barassistant_saltrim_systemd_wanted_services_list_default: []
 barassistant_saltrim_systemd_wanted_services_list_auto: []
@@ -426,13 +426,13 @@ barassistant_server_floc_optout_enabled: true
 # See: `barassistant_http_header_strict_transport_security`
 barassistant_server_hsts_preload_enabled: false
 
-# List of systemd services that the Bar Assistant server systemd service depends on
+# List of systemd services that the Reitti server systemd service depends on
 barassistant_server_systemd_required_services_list: "{{ barassistant_server_systemd_required_services_list_default + barassistant_server_systemd_required_services_list_auto + barassistant_server_systemd_required_services_list_custom }}"
 barassistant_server_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
 barassistant_server_systemd_required_services_list_auto: []
 barassistant_server_systemd_required_services_list_custom: []
 
-# List of systemd services that the Bar Assistant server systemd service wants
+# List of systemd services that the Reitti server systemd service wants
 barassistant_server_systemd_wanted_services_list: "{{ barassistant_server_systemd_wanted_services_list_default + barassistant_server_systemd_wanted_services_list_auto + barassistant_server_systemd_wanted_services_list_custom }}"
 barassistant_server_systemd_wanted_services_list_default: []
 barassistant_server_systemd_wanted_services_list_auto: []

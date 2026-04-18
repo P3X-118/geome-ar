@@ -4,7 +4,7 @@ galaxy_info:
   company: progressiv
   role_name: barassistant
   namespace: progressiv
-  description: Bar Assistant
+  description: Reitti
   platforms:
     - name: Debian
       versions:

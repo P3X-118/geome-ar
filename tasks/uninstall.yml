@@ -1,26 +1,26 @@
 # SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
-# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-- name: Ensure Bar Assistant systemd services are stopped and removed
+- name: Ensure Reitti systemd services are stopped and removed
   ansible.builtin.include_tasks: "{{ role_path }}/tasks/remove_service.yml"
   with_items:
     - service: "{{ barassistant_saltrim_identifier }}.service"
       path: "{{ devture_systemd_docker_base_systemd_path }}/{{ barassistant_saltrim_identifier }}.service"
     - { service: "{{ barassistant_server_identifier }}.service", path: "{{ devture_systemd_docker_base_systemd_path }}/{{ barassistant_server_identifier }}.service" }
 
-- name: Ensure Bar Assistant container network does not exist
+- name: Ensure Reitti container network does not exist
   when: barassistant_container_network_deletion_enabled
   block:
-    - name: Ensure Bar Assistant container network does not exist via community.docker.docker_network
+    - name: Ensure Reitti container network does not exist via community.docker.docker_network
       when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
       community.docker.docker_network:
         name: "{{ barassistant_container_network }}"
         state: absent
 
-    - name: Ensure Bar Assistant container network does not exist via ansible.builtin.command
+    - name: Ensure Reitti container network does not exist via ansible.builtin.command
       when: devture_systemd_docker_base_container_network_creation_method == 'command'
       ansible.builtin.command:
         cmd: >-
@@ -30,9 +30,9 @@
       failed_when: network_deletion_result.rc > 0 and 'not found' not in network_deletion_result.stderr
       changed_when: barassistant_container_network in network_deletion_result.stdout
 
-- name: Remove Bar Assistant server files
+- name: Remove Reitti server files
   block:
-    - name: Ensure Bar Assistant server support files do not exist
+    - name: Ensure Reitti server support files do not exist
       ansible.builtin.file:
         path: "{{ barassistant_server_base_path }}/{{ item }}"
         state: absent
@@ -40,27 +40,27 @@
         - env
         - labels
 
-    - name: Ensure Bar Assistant server local data path does not exist if empty
+    - name: Ensure Reitti server local data path does not exist if empty
       ansible.builtin.command:
         cmd: "rmdir {{ barassistant_server_data_path }}"
       register: barassistant_server_data_path_deletion_result
       changed_when: barassistant_server_data_path_deletion_result.rc == 0
       failed_when: false
 
-    - name: Ensure Bar Assistant server base path does not exist if empty
+    - name: Ensure Reitti server base path does not exist if empty
       ansible.builtin.command:
         cmd: "rmdir {{ barassistant_server_base_path }}"
       register: barassistant_server_base_path_deletion_result
       changed_when: barassistant_server_base_path_deletion_result.rc == 0
       failed_when: false
 
-    - name: Check existence of Bar Assistant server local data path
+    - name: Check existence of Reitti server local data path
       ansible.builtin.stat:
         path: "{{ barassistant_server_data_path }}"
       register: barassistant_server_data_path_stat
 
     # We just want to notify the user. Deleting data is too destructive.
-    - name: Inject the message about the remaining Bar Assistant server local data path
+    - name: Inject the message about the remaining Reitti server local data path
       when: barassistant_server_data_path_stat.stat.exists | bool
       ansible.builtin.set_fact:
         devture_playbook_runtime_messages_list: |
@@ -68,13 +68,13 @@
             devture_playbook_runtime_messages_list | default([])
             +
             [
-              "Note: As the local Bar Assistant instance has been removed, some old data remains in `" + barassistant_server_data_path + "`. Feel free to delete it."
+              "Note: As the local Reitti instance has been removed, some old data remains in `" + barassistant_server_data_path + "`. Feel free to delete it."
             ]
           }}
 
-- name: Remove Bar Assistant Salt Rim files
+- name: Remove Reitti Salt Rim files
   block:
-    - name: Ensure Bar Assistant Salt Rim path does not exist
+    - name: Ensure Reitti Salt Rim path does not exist
       ansible.builtin.file:
         path: "{{ barassistant_saltrim_base_path }}"
         state: absent

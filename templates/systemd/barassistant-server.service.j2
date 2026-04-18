@@ -1,13 +1,13 @@
 {#
 SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
 SPDX-FileCopyrightText: 2025 Slavi Pantaleev
-SPDX-FileCopyrightText: 2025 Suguru Hirahara
+SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 #}
 
 [Unit]
-Description=Bar Assistant server ({{ barassistant_server_identifier }})
+Description=Reitti server ({{ barassistant_server_identifier }})
 {% for service in barassistant_server_systemd_required_services_list %}
 Requires={{ service }}
 After={{ service }}
