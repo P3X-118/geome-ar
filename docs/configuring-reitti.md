@@ -64,8 +64,6 @@ reitti_hostname: "example.com"
 
 After adjusting the hostname, make sure to adjust your DNS records to point the domain to your server.
 
-**Note**: hosting Reitti under a subpath (by configuring the `reitti_path_prefix` variable) does not seem to be possible due to Reitti's technical limitations.
-
 ### Set variables for the database server
 
 To have the Reitti instance connect to your Postgres server, add the following configuration to your `vars.yml` file.
