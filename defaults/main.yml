@@ -260,7 +260,7 @@ reitti_environment_variables_additional_variables: ""
 
 ########################################################################
 #                                                                      #
-# server                                                               #
+# tile_cache                                                           #
 #                                                                      #
 ########################################################################
 
@@ -310,7 +310,7 @@ reitti_tilecache_container_additional_volumes_auto: []
 reitti_tilecache_container_additional_volumes_custom: []
 
 # reitti_tilecache_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
-# See `../templates/labels_server.j2` for details.
+# See `../templates/labels_tilecache.j2` for details.
 #
 # To inject your own other container labels, see `reitti_tilecache_container_labels_additional_labels_custom`.
 reitti_tilecache_container_labels_traefik_enabled: true
@@ -361,7 +361,7 @@ reitti_tilecache_container_labels_traefik_additional_response_headers_custom: {}
 
 # reitti_tilecache_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
 # To add your own custom labels, use `reitti_tilecache_container_labels_additional_labels_custom`
-# See `../templates/labels_server.j2` for details.
+# See `../templates/labels_tilecache.j2` for details.
 #
 # Example:
 # reitti_tilecache_container_labels_additional_labels_custom:
@@ -524,6 +524,6 @@ reitti_tilecache_environment_variables_additional_variables: ""
 
 ########################################################################
 #                                                                      #
-# /server                                                              #
+# /tile_cache                                                          #
 #                                                                      #
 ########################################################################
