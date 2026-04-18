@@ -36,9 +36,9 @@
     owner: "{{ barassistant_uid }}"
     group: "{{ barassistant_gid }}"
   with_items:
-    - { src: "{{ role_path }}/templates/labels_saltrim.j2", dest: "{{ reitti_base_path }}/labels" }
+    - { src: "{{ role_path }}/templates/labels.j2", dest: "{{ reitti_base_path }}/labels" }
     - { src: "{{ role_path }}/templates/labels_server.j2", dest: "{{ barassistant_server_base_path }}/labels" }
-    - { src: "{{ role_path }}/templates/env_saltrim.j2", dest: "{{ reitti_base_path }}/env" }
+    - { src: "{{ role_path }}/templates/env.j2", dest: "{{ reitti_base_path }}/env" }
     - { src: "{{ role_path }}/templates/env_server.j2", dest: "{{ barassistant_server_base_path }}/env" }
   register: barassistant_support_files_result
 
@@ -100,7 +100,7 @@
     dest: "{{ item.dest }}"
     mode: "0644"
   with_items:
-    - src: "{{ role_path }}/templates/systemd/barassistant-saltrim.service.j2"
+    - src: "{{ role_path }}/templates/systemd/reitti.service.j2"
       dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ reitti_identifier }}.service"
     - src: "{{ role_path }}/templates/systemd/barassistant-server.service.j2"
       dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ barassistant_server_identifier }}.service"
