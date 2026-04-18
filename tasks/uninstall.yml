@@ -74,7 +74,42 @@
 
 - name: Remove Reitti files
   block:
-    - name: Ensure Reitti path does not exist
+    - name: Ensure Reitti support files do not exist
       ansible.builtin.file:
-        path: "{{ reitti_base_path }}"
+        path: "{{ reitti_base_path }}/{{ item }}"
         state: absent
+      with_items:
+        - env
+        - labels
+
+    - name: Ensure Reitti local data path does not exist if empty
+      ansible.builtin.command:
+        cmd: "rmdir {{ reitti_data_path }}"
+      register: reitti_data_path_deletion_result
+      changed_when: reitti_data_path_deletion_result.rc == 0
+      failed_when: false
+
+    - name: Ensure Reitti base path does not exist if empty
+      ansible.builtin.command:
+        cmd: "rmdir {{ reitti_base_path }}"
+      register: reitti_base_path_deletion_result
+      changed_when: reitti_base_path_deletion_result.rc == 0
+      failed_when: false
+
+    - name: Check existence of Reitti local data path
+      ansible.builtin.stat:
+        path: "{{ reitti_data_path }}"
+      register: reitti_data_path_stat
+
+    # We just want to notify the user. Deleting data is too destructive.
+    - name: Inject the message about the remaining Reitti local data path
+      when: reitti_data_path_stat.stat.exists | bool
+      ansible.builtin.set_fact:
+        devture_playbook_runtime_messages_list: |
+          {{
+            devture_playbook_runtime_messages_list | default([])
+            +
+            [
+              "Note: As the local Reitti instance has been removed, some old data remains in `" + reitti_data_path + "`. Feel free to delete it."
+            ]
+          }}
