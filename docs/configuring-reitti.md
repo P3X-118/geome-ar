@@ -96,9 +96,9 @@ If you are looking for an Ansible role for Meilisearch, you can check out [ansib
 
 ### Configuring a Redis database (optional)
 
-You can optionally enable a [Redis](https://redis.io/) database for the Reitti server. [Valkey](https://valkey.io/) can also be used instead.
+You can optionally enable a [Redis](https://redis.io/) database for the Reitti tile cache server. [Valkey](https://valkey.io/) can also be used instead.
 
-To enable the Redis database for Reitti server, add the following configuration to your `vars.yml` file:
+To enable the Redis database for Reitti tile cache server, add the following configuration to your `vars.yml` file:
 
 ```yaml
 reitti_redis_hostname: YOUR_REDIS_SERVER_HOSTNAME_HERE
@@ -149,7 +149,7 @@ See [this page](https://docs.reitti.app/setup/mailing/) on the official document
 
 ### Integrating with Prometheus (optional)
 
-Reitti server can natively expose metrics to Prometheus.
+Reitti tile cache server can natively expose metrics to Prometheus.
 
 If you are looking for an integration, you can check out the MASH playbook. See [this section of the documentation on the playbook](https://github.com/mother-of-all-self-hosting/mash-playbook/blob/main/docs/services/reitti.md#integrating-with-prometheus-optional) for more information.
 
@@ -183,4 +183,4 @@ Since account registration is disabled by default, you need to enable it first b
 
 ### Check the service's logs
 
-You can find the logs in [systemd-journald](https://www.freedesktop.org/software/systemd/man/systemd-journald.service.html) by logging in to the server with SSH, and running `journalctl -fu reitti-server` (or how you/your playbook named the service, e.g. `mash-reitti-server`) for the API server and `journalctl -fu reitti` (or how you/your playbook named the service, e.g. `mash-reitti`) for the Salt Rim instance, respectively.
+You can find the logs in [systemd-journald](https://www.freedesktop.org/software/systemd/man/systemd-journald.service.html) by logging in to the server with SSH, and running `journalctl -fu reitti-tilecache` (or how you/your playbook named the service, e.g. `mash-reitti-tilecache`) for the tile cache server and `journalctl -fu reitti` (or how you/your playbook named the service, e.g. `mash-reitti`) for the Salt Rim instance, respectively.

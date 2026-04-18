@@ -30,9 +30,9 @@
       failed_when: network_deletion_result.rc > 0 and 'not found' not in network_deletion_result.stderr
       changed_when: reitti_container_network in network_deletion_result.stdout
 
-- name: Remove Reitti server files
+- name: Remove Reitti tile cache server files
   block:
-    - name: Ensure Reitti server support files do not exist
+    - name: Ensure Reitti tile cache server support files do not exist
       ansible.builtin.file:
         path: "{{ reitti_tilecache_base_path }}/{{ item }}"
         state: absent
@@ -40,27 +40,27 @@
         - env
         - labels
 
-    - name: Ensure Reitti server local data path does not exist if empty
+    - name: Ensure Reitti tile cache server local data path does not exist if empty
       ansible.builtin.command:
         cmd: "rmdir {{ reitti_tilecache_data_path }}"
       register: reitti_tilecache_data_path_deletion_result
       changed_when: reitti_tilecache_data_path_deletion_result.rc == 0
       failed_when: false
 
-    - name: Ensure Reitti server base path does not exist if empty
+    - name: Ensure Reitti tile cache server base path does not exist if empty
       ansible.builtin.command:
         cmd: "rmdir {{ reitti_tilecache_base_path }}"
       register: reitti_tilecache_base_path_deletion_result
       changed_when: reitti_tilecache_base_path_deletion_result.rc == 0
       failed_when: false
 
-    - name: Check existence of Reitti server local data path
+    - name: Check existence of Reitti tile cache server local data path
       ansible.builtin.stat:
         path: "{{ reitti_tilecache_data_path }}"
       register: reitti_tilecache_data_path_stat
 
     # We just want to notify the user. Deleting data is too destructive.
-    - name: Inject the message about the remaining Reitti server local data path
+    - name: Inject the message about the remaining Reitti tile cache server local data path
       when: reitti_tilecache_data_path_stat.stat.exists | bool
       ansible.builtin.set_fact:
         devture_playbook_runtime_messages_list: |

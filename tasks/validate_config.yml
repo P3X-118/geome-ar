@@ -20,7 +20,7 @@
 - name: Run if mailer is enabled
   when: reitti_mailer_enabled
   block:
-    - name: Fail if Reitti server mailer driver is invalid
+    - name: Fail if Reitti tile cache server mailer driver is invalid
       ansible.builtin.fail:
         msg: >-
           reitti_tilecache_environment_variables_mail_mailer must be 'log' or 'smtp'
@@ -38,10 +38,10 @@
             - reitti_tilecache_environment_variables_mail_host
             - reitti_tilecache_environment_variables_mail_from_address
 
-- name: Run if Traefik is enabled for the server
+- name: Run if Traefik is enabled for Reitti tile cache server
   when: reitti_tilecache_container_labels_traefik_enabled | bool
   block:
-    - name: Fail if Traefik settings required for Reitti server are not defined
+    - name: Fail if Traefik settings required for Reitti tile cache server are not defined
       ansible.builtin.fail:
         msg: >-
           You need to define a required configuration setting (`{{ item }}`).
