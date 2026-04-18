@@ -22,9 +22,9 @@
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
-    mode: "0750"
-    owner: "33" # Fixed value: https://docs.reitti.app/setup/
-    group: "33" # Fixed value: https://docs.reitti.app/setup/
+    mode: "0755" # avoid permission errors of /var/cache/nginx
+    owner: "33" # www-data
+    group: "33" # www-data
   with_items:
     - "{{ reitti_tilecache_data_path }}"
 
