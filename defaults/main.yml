@@ -13,7 +13,7 @@ barassistant_enabled: true
 
 barassistant_identifier: barassistant
 barassistant_base_path: "/{{ barassistant_identifier }}"
-barassistant_saltrim_base_path: "{{ barassistant_base_path }}/saltrim"
+reitti_base_path: "{{ barassistant_base_path }}/saltrim"
 barassistant_server_base_path: "{{ barassistant_base_path }}/server"
 barassistant_server_data_path: "{{ barassistant_server_base_path }}/data"
 
@@ -51,102 +51,102 @@ barassistant_restart_necessary: false
 #                                                                      #
 ########################################################################
 
-barassistant_saltrim_identifier: "{{ barassistant_identifier }}-saltrim"
+reitti_identifier: "{{ barassistant_identifier }}-saltrim"
 
 # renovate: datasource=docker depName=barassistant/salt-rim
-barassistant_saltrim_version: 4.14.1
+reitti_version: 4.14.1
 
-barassistant_saltrim_scheme: https
+reitti_scheme: https
 
-barassistant_saltrim_hostname: "{{ barassistant_hostname }}"
+reitti_hostname: "{{ barassistant_hostname }}"
 
 # The path at which Salt Rim is exposed
-barassistant_saltrim_path_prefix: "/"
+reitti_path_prefix: "/"
 
-barassistant_saltrim_container_image: "{{ barassistant_saltrim_container_image_registry_prefix }}barassistant/salt-rim:{{ barassistant_saltrim_container_image_tag }}"
-barassistant_saltrim_container_image_tag: "{{ barassistant_saltrim_version }}"
-barassistant_saltrim_container_image_registry_prefix: "{{ barassistant_saltrim_container_image_registry_prefix_upstream }}"
-barassistant_saltrim_container_image_registry_prefix_upstream: "{{ barassistant_saltrim_container_image_registry_prefix_upstream_default }}"
-barassistant_saltrim_container_image_registry_prefix_upstream_default: docker.io/
-barassistant_saltrim_container_image_force_pull: "{{ barassistant_saltrim_container_image.endswith(':latest') }}"
+reitti_container_image: "{{ reitti_container_image_registry_prefix }}barassistant/salt-rim:{{ reitti_container_image_tag }}"
+reitti_container_image_tag: "{{ reitti_version }}"
+reitti_container_image_registry_prefix: "{{ reitti_container_image_registry_prefix_upstream }}"
+reitti_container_image_registry_prefix_upstream: "{{ reitti_container_image_registry_prefix_upstream_default }}"
+reitti_container_image_registry_prefix_upstream_default: docker.io/
+reitti_container_image_force_pull: "{{ reitti_container_image.endswith(':latest') }}"
 
-barassistant_saltrim_container_network: "{{ barassistant_container_network }}"
+reitti_container_network: "{{ barassistant_container_network }}"
 
-# Specify how the Salt Rim container publishes its HTTP port (as defined by `barassistant_saltrim_container_http_port`).
+# Specify how the Salt Rim container publishes its HTTP port (as defined by `reitti_container_http_port`).
 #
 # Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:2586"), or empty string to not expose.
-barassistant_saltrim_container_http_host_bind_port: ""
+reitti_container_http_host_bind_port: ""
 
 # The port number in the container
-barassistant_saltrim_container_http_port: 8080
+reitti_container_http_port: 8080
 
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
 # Use this to expose this container to another reverse proxy, which runs in a different container network.
-barassistant_saltrim_container_additional_networks: "{{ barassistant_saltrim_container_additional_networks_auto + barassistant_saltrim_container_additional_networks_custom }}"
-barassistant_saltrim_container_additional_networks_auto: []
-barassistant_saltrim_container_additional_networks_custom: []
+reitti_container_additional_networks: "{{ reitti_container_additional_networks_auto + reitti_container_additional_networks_custom }}"
+reitti_container_additional_networks_auto: []
+reitti_container_additional_networks_custom: []
 
 # A list of additional "volumes" to mount in the container.
 # This list gets populated dynamically at runtime. You can provide a different default value,
 # if you wish to mount your own files into the container.
 # Contains definition objects like this: `{"type": "bind", "src": "/outside", "dst": "/inside", "options": "readonly"}.
 # See the `--mount` documentation for the `docker run` command.
-barassistant_saltrim_container_additional_volumes: "{{ barassistant_saltrim_container_additional_volumes_auto + barassistant_saltrim_container_additional_volumes_custom }}"
-barassistant_saltrim_container_additional_volumes_auto: []
-barassistant_saltrim_container_additional_volumes_custom: []
+reitti_container_additional_volumes: "{{ reitti_container_additional_volumes_auto + reitti_container_additional_volumes_custom }}"
+reitti_container_additional_volumes_auto: []
+reitti_container_additional_volumes_custom: []
 
-# barassistant_saltrim_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
+# reitti_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
 # See `../templates/labels_saltrim.j2` for details.
 #
-# To inject your own other container labels, see `barassistant_saltrim_container_labels_additional_labels_custom`.
-barassistant_saltrim_container_labels_traefik_enabled: true
-barassistant_saltrim_container_labels_traefik_docker_network: "{{ barassistant_saltrim_container_network }}"
-barassistant_saltrim_container_labels_traefik_hostname: "{{ barassistant_saltrim_hostname }}"
+# To inject your own other container labels, see `reitti_container_labels_additional_labels_custom`.
+reitti_container_labels_traefik_enabled: true
+reitti_container_labels_traefik_docker_network: "{{ reitti_container_network }}"
+reitti_container_labels_traefik_hostname: "{{ reitti_hostname }}"
 # The path prefix must either be `/` or not end with a slash (e.g. `/barassistant-saltrim`).
-barassistant_saltrim_container_labels_traefik_path_prefix: "{{ barassistant_saltrim_path_prefix }}"
-barassistant_saltrim_container_labels_traefik_rule: "Host(`{{ barassistant_saltrim_container_labels_traefik_hostname }}`){% if barassistant_saltrim_container_labels_traefik_path_prefix != '/' %} && PathPrefix(`{{ barassistant_saltrim_container_labels_traefik_path_prefix }}`){% endif %}"
-barassistant_saltrim_container_labels_traefik_priority: 0
-barassistant_saltrim_container_labels_traefik_entrypoints: web-secure
-barassistant_saltrim_container_labels_traefik_tls: "{{ barassistant_saltrim_container_labels_traefik_entrypoints != 'web' }}"
-barassistant_saltrim_container_labels_traefik_tls_certResolver: default  # noqa var-naming
+reitti_container_labels_traefik_path_prefix: "{{ reitti_path_prefix }}"
+reitti_container_labels_traefik_rule: "Host(`{{ reitti_container_labels_traefik_hostname }}`){% if reitti_container_labels_traefik_path_prefix != '/' %} && PathPrefix(`{{ reitti_container_labels_traefik_path_prefix }}`){% endif %}"
+reitti_container_labels_traefik_priority: 0
+reitti_container_labels_traefik_entrypoints: web-secure
+reitti_container_labels_traefik_tls: "{{ reitti_container_labels_traefik_entrypoints != 'web' }}"
+reitti_container_labels_traefik_tls_certResolver: default  # noqa var-naming
 
 # Controls which additional headers to attach to all HTTP requests.
-# To add your own custom request headers, use `barassistant_saltrim_container_labels_traefik_additional_request_headers_custom`
-barassistant_saltrim_container_labels_traefik_additional_request_headers: "{{ barassistant_saltrim_container_labels_traefik_additional_request_headers_auto | combine(barassistant_saltrim_container_labels_traefik_additional_request_headers_custom) }}"
-barassistant_saltrim_container_labels_traefik_additional_request_headers_auto: {}
-barassistant_saltrim_container_labels_traefik_additional_request_headers_custom: {}
+# To add your own custom request headers, use `reitti_container_labels_traefik_additional_request_headers_custom`
+reitti_container_labels_traefik_additional_request_headers: "{{ reitti_container_labels_traefik_additional_request_headers_auto | combine(reitti_container_labels_traefik_additional_request_headers_custom) }}"
+reitti_container_labels_traefik_additional_request_headers_auto: {}
+reitti_container_labels_traefik_additional_request_headers_custom: {}
 
 # Controls which additional headers to attach to all HTTP responses.
-# To add your own custom response headers, use `barassistant_saltrim_container_labels_traefik_additional_response_headers_custom`
-barassistant_saltrim_container_labels_traefik_additional_response_headers: "{{ barassistant_saltrim_container_labels_traefik_additional_response_headers_auto | combine(barassistant_saltrim_container_labels_traefik_additional_response_headers_custom) }}"
-barassistant_saltrim_container_labels_traefik_additional_response_headers_auto: |
+# To add your own custom response headers, use `reitti_container_labels_traefik_additional_response_headers_custom`
+reitti_container_labels_traefik_additional_response_headers: "{{ reitti_container_labels_traefik_additional_response_headers_auto | combine(reitti_container_labels_traefik_additional_response_headers_custom) }}"
+reitti_container_labels_traefik_additional_response_headers_auto: |
   {{
     {}
-    | combine ({'X-XSS-Protection': barassistant_saltrim_http_header_xss_protection} if barassistant_saltrim_http_header_xss_protection else {})
-    | combine ({'X-Content-Type-Options': barassistant_saltrim_http_header_content_type_options} if barassistant_saltrim_http_header_content_type_options else {})
-    | combine ({'Content-Security-Policy': barassistant_saltrim_http_header_content_security_policy} if barassistant_saltrim_http_header_content_security_policy else {})
-    | combine ({'Permissions-Policy': barassistant_saltrim_http_header_permissions_policy} if barassistant_saltrim_http_header_permissions_policy else {})
-    | combine ({'Strict-Transport-Security': barassistant_saltrim_http_header_strict_transport_security} if barassistant_saltrim_http_header_strict_transport_security and barassistant_saltrim_container_labels_traefik_tls else {})
+    | combine ({'X-XSS-Protection': reitti_http_header_xss_protection} if reitti_http_header_xss_protection else {})
+    | combine ({'X-Content-Type-Options': reitti_http_header_content_type_options} if reitti_http_header_content_type_options else {})
+    | combine ({'Content-Security-Policy': reitti_http_header_content_security_policy} if reitti_http_header_content_security_policy else {})
+    | combine ({'Permissions-Policy': reitti_http_header_permissions_policy} if reitti_http_header_permissions_policy else {})
+    | combine ({'Strict-Transport-Security': reitti_http_header_strict_transport_security} if reitti_http_header_strict_transport_security and reitti_container_labels_traefik_tls else {})
   }}
-barassistant_saltrim_container_labels_traefik_additional_response_headers_custom: {}
+reitti_container_labels_traefik_additional_response_headers_custom: {}
 
-# barassistant_saltrim_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
-# To add your own custom labels, use `barassistant_saltrim_container_labels_additional_labels_custom`
+# reitti_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
+# To add your own custom labels, use `reitti_container_labels_additional_labels_custom`
 # See `../templates/labels_saltrim.j2` for details.
 #
 # Example:
-# barassistant_saltrim_container_labels_additional_labels_custom:
+# reitti_container_labels_additional_labels_custom:
 #   - my.label=1
 #   - another.label="here"
-barassistant_saltrim_container_labels_additional_labels: "{{ barassistant_saltrim_container_labels_additional_labels_auto + barassistant_saltrim_container_labels_additional_labels_custom }}"
-barassistant_saltrim_container_labels_additional_labels_auto: []
-barassistant_saltrim_container_labels_additional_labels_custom: []
+reitti_container_labels_additional_labels: "{{ reitti_container_labels_additional_labels_auto + reitti_container_labels_additional_labels_custom }}"
+reitti_container_labels_additional_labels_auto: []
+reitti_container_labels_additional_labels_custom: []
 
 # A list of extra arguments to pass to the container (`docker create` command)
-barassistant_saltrim_container_extra_arguments: "{{ barassistant_saltrim_container_extra_arguments_auto + barassistant_saltrim_container_extra_arguments_custom }}"
-barassistant_saltrim_container_extra_arguments_auto: []
-barassistant_saltrim_container_extra_arguments_custom: []
+reitti_container_extra_arguments: "{{ reitti_container_extra_arguments_auto + reitti_container_extra_arguments_custom }}"
+reitti_container_extra_arguments_auto: []
+reitti_container_extra_arguments_custom: []
 
 # Specifies the value of the `X-XSS-Protection` header
 # Stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.
@@ -154,23 +154,23 @@ barassistant_saltrim_container_extra_arguments_custom: []
 # Learn more about it is here:
 # - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
 # - https://portswigger.net/web-security/cross-site-scripting/reflected
-barassistant_saltrim_http_header_xss_protection: "1; mode=block"
+reitti_http_header_xss_protection: "1; mode=block"
 
 # Specifies the value of the `X-Content-Type-Options` header.
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
-barassistant_saltrim_http_header_content_type_options: nosniff
+reitti_http_header_content_type_options: nosniff
 
 # Specifies the value of the `Content-Security-Policy` header.
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
-barassistant_saltrim_http_header_content_security_policy: frame-ancestors 'self'
+reitti_http_header_content_security_policy: frame-ancestors 'self'
 
 # Specifies the value of the `Permissions-Policy` header.
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy
-barassistant_saltrim_http_header_permissions_policy: "{{ 'interest-cohort=()' if barassistant_saltrim_floc_optout_enabled else '' }}"
+reitti_http_header_permissions_policy: "{{ 'interest-cohort=()' if reitti_floc_optout_enabled else '' }}"
 
 # Specifies the value of the `Strict-Transport-Security` header.
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
-barassistant_saltrim_http_header_strict_transport_security: "max-age=31536000; includeSubDomains{{ '; preload' if barassistant_saltrim_hsts_preload_enabled else '' }}"
+reitti_http_header_strict_transport_security: "max-age=31536000; includeSubDomains{{ '; preload' if reitti_hsts_preload_enabled else '' }}"
 
 # Controls whether to send a "Permissions-Policy interest-cohort=();" header along with all responses
 #
@@ -180,8 +180,8 @@ barassistant_saltrim_http_header_strict_transport_security: "max-age=31536000; i
 # - https://amifloced.org/
 #
 # Of course, a better solution is to just stop using browsers (like Chrome), which participate in such tracking practices.
-# See: `barassistant_saltrim_http_header_permissions_policy`
-barassistant_saltrim_floc_optout_enabled: true
+# See: `reitti_http_header_permissions_policy`
+reitti_floc_optout_enabled: true
 
 # Controls if HSTS preloading is enabled
 #
@@ -193,67 +193,67 @@ barassistant_saltrim_floc_optout_enabled: true
 # - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
 # - https://hstspreload.org/#opt-in
 # See: `barassistant_http_header_strict_transport_security`
-barassistant_saltrim_hsts_preload_enabled: false
+reitti_hsts_preload_enabled: false
 
 # List of systemd services that the Reitti Salt Rim systemd service depends on
-barassistant_saltrim_systemd_required_services_list: "{{ barassistant_saltrim_systemd_required_services_list_default + barassistant_saltrim_systemd_required_services_list_auto + barassistant_saltrim_systemd_required_services_list_custom }}"
-barassistant_saltrim_systemd_required_services_list_default: |
+reitti_systemd_required_services_list: "{{ reitti_systemd_required_services_list_default + reitti_systemd_required_services_list_auto + reitti_systemd_required_services_list_custom }}"
+reitti_systemd_required_services_list_default: |
   {{
     ([devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [])
     +
     ([barassistant_server_identifier ~ '.service'])
   }}
-barassistant_saltrim_systemd_required_services_list_auto: []
-barassistant_saltrim_systemd_required_services_list_custom: []
+reitti_systemd_required_services_list_auto: []
+reitti_systemd_required_services_list_custom: []
 
 # List of systemd services that the Reitti Salt Rim systemd service wants
-barassistant_saltrim_systemd_wanted_services_list: "{{ barassistant_saltrim_systemd_wanted_services_list_default + barassistant_saltrim_systemd_wanted_services_list_auto + barassistant_saltrim_systemd_wanted_services_list_custom }}"
-barassistant_saltrim_systemd_wanted_services_list_default: []
-barassistant_saltrim_systemd_wanted_services_list_auto: []
-barassistant_saltrim_systemd_wanted_services_list_custom: []
+reitti_systemd_wanted_services_list: "{{ reitti_systemd_wanted_services_list_default + reitti_systemd_wanted_services_list_auto + reitti_systemd_wanted_services_list_custom }}"
+reitti_systemd_wanted_services_list_default: []
+reitti_systemd_wanted_services_list_auto: []
+reitti_systemd_wanted_services_list_custom: []
 
 # Controls how long to wait for the container to stop gracefully before killing it.
-barassistant_saltrim_container_stop_grace_time_seconds: "{{ devture_systemd_docker_base_container_stop_grace_time_seconds }}"
+reitti_container_stop_grace_time_seconds: "{{ devture_systemd_docker_base_container_stop_grace_time_seconds }}"
 
 # Controls how long the pre-start cleanup should wait for stale container-name release
 # before failing startup explicitly.
-barassistant_saltrim_container_cleanup_timeout_seconds: "{{ devture_systemd_docker_base_container_cleanup_timeout_seconds }}"
+reitti_container_cleanup_timeout_seconds: "{{ devture_systemd_docker_base_container_cleanup_timeout_seconds }}"
 
 # Controls the delay between pre-start cleanup retries.
-barassistant_saltrim_container_cleanup_retry_delay_seconds: "{{ devture_systemd_docker_base_container_cleanup_retry_delay_seconds }}"
+reitti_container_cleanup_retry_delay_seconds: "{{ devture_systemd_docker_base_container_cleanup_retry_delay_seconds }}"
 
 # Shell command used in the systemd pre-start phase to deterministically remove a stale
 # container and wait until Docker releases its name.
-barassistant_saltrim_container_cleanup_command: |
+reitti_container_cleanup_command: |
   i=0;
-  while [ "$i" -lt {{ barassistant_saltrim_container_cleanup_timeout_seconds }} ]; do
-  {{ devture_systemd_docker_base_host_command_docker }} stop -t {{ barassistant_saltrim_container_stop_grace_time_seconds }} {{ barassistant_saltrim_identifier }} >/dev/null 2>&1 || true;
-  {{ devture_systemd_docker_base_host_command_docker }} rm -f {{ barassistant_saltrim_identifier }} >/dev/null 2>&1 || true;
-  if {{ devture_systemd_docker_base_host_command_docker }} container inspect {{ barassistant_saltrim_identifier }} >/dev/null 2>&1; then
+  while [ "$i" -lt {{ reitti_container_cleanup_timeout_seconds }} ]; do
+  {{ devture_systemd_docker_base_host_command_docker }} stop -t {{ reitti_container_stop_grace_time_seconds }} {{ reitti_identifier }} >/dev/null 2>&1 || true;
+  {{ devture_systemd_docker_base_host_command_docker }} rm -f {{ reitti_identifier }} >/dev/null 2>&1 || true;
+  if {{ devture_systemd_docker_base_host_command_docker }} container inspect {{ reitti_identifier }} >/dev/null 2>&1; then
   i=$((i + 1));
-  sleep {{ barassistant_saltrim_container_cleanup_retry_delay_seconds }};
+  sleep {{ reitti_container_cleanup_retry_delay_seconds }};
   continue;
   fi;
   if {{ devture_systemd_docker_base_host_command_docker }} info >/dev/null 2>&1; then
   exit 0;
   fi;
-  echo "Failed to query Docker daemon while cleaning up {{ barassistant_saltrim_identifier }}" >&2;
+  echo "Failed to query Docker daemon while cleaning up {{ reitti_identifier }}" >&2;
   exit 1;
   done;
-  echo "Failed to remove stale container {{ barassistant_saltrim_identifier }} after {{ barassistant_saltrim_container_cleanup_timeout_seconds }} attempts" >&2;
+  echo "Failed to remove stale container {{ reitti_identifier }} after {{ reitti_container_cleanup_timeout_seconds }} attempts" >&2;
   exit 1
 
 # Control if mailer is enabled
 barassistant_mailer_enabled: false
 
 # Specify the timezone
-barassistant_saltrim_environment_variables_tz: UTC
+reitti_environment_variables_tz: UTC
 
 # Specify the Meilisearch server instance URL to enable the search and filtering functions
-barassistant_saltrim_environment_variables_meilisearch_url: ""
+reitti_environment_variables_meilisearch_url: ""
 
 # Additional environment variables.
-barassistant_saltrim_environment_variables_additional_variables: ""
+reitti_environment_variables_additional_variables: ""
 
 ########################################################################
 #                                                                      #
@@ -284,7 +284,7 @@ barassistant_server_container_image_tag: "{{ barassistant_server_version }}"
 barassistant_server_container_image_registry_prefix: "{{ barassistant_server_container_image_registry_prefix_upstream }}"
 barassistant_server_container_image_registry_prefix_upstream: "{{ barassistant_server_container_image_registry_prefix_upstream_default }}"
 barassistant_server_container_image_registry_prefix_upstream_default: docker.io/
-barassistant_server_container_image_force_pull: "{{ barassistant_saltrim_container_image.endswith(':latest') }}"
+barassistant_server_container_image_force_pull: "{{ reitti_container_image.endswith(':latest') }}"
 
 barassistant_server_container_network: "{{ barassistant_container_network }}"
 

@@ -15,7 +15,7 @@
     group: "{{ barassistant_gid }}"
   with_items:
     - "{{ barassistant_base_path }}"
-    - "{{ barassistant_saltrim_base_path }}"
+    - "{{ reitti_base_path }}"
     - "{{ barassistant_server_base_path }}"
 
 - name: Ensure Reitti server data path exists
@@ -36,9 +36,9 @@
     owner: "{{ barassistant_uid }}"
     group: "{{ barassistant_gid }}"
   with_items:
-    - { src: "{{ role_path }}/templates/labels_saltrim.j2", dest: "{{ barassistant_saltrim_base_path }}/labels" }
+    - { src: "{{ role_path }}/templates/labels_saltrim.j2", dest: "{{ reitti_base_path }}/labels" }
     - { src: "{{ role_path }}/templates/labels_server.j2", dest: "{{ barassistant_server_base_path }}/labels" }
-    - { src: "{{ role_path }}/templates/env_saltrim.j2", dest: "{{ barassistant_saltrim_base_path }}/env" }
+    - { src: "{{ role_path }}/templates/env_saltrim.j2", dest: "{{ reitti_base_path }}/env" }
     - { src: "{{ role_path }}/templates/env_server.j2", dest: "{{ barassistant_server_base_path }}/env" }
   register: barassistant_support_files_result
 
@@ -66,7 +66,7 @@
     name: "{{ item.image }}"
     source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
   with_items:
-    - { image: "{{ barassistant_saltrim_container_image }}" }
+    - { image: "{{ reitti_container_image }}" }
     - { image: "{{ barassistant_server_container_image }}" }
   register: barassistant_container_image_pull_result
   retries: "{{ devture_playbook_help_container_retries_count }}"
@@ -101,7 +101,7 @@
     mode: "0644"
   with_items:
     - src: "{{ role_path }}/templates/systemd/barassistant-saltrim.service.j2"
-      dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ barassistant_saltrim_identifier }}.service"
+      dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ reitti_identifier }}.service"
     - src: "{{ role_path }}/templates/systemd/barassistant-server.service.j2"
       dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ barassistant_server_identifier }}.service"
   register: barassistant_systemd_services_result

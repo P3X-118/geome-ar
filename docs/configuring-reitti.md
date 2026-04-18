@@ -76,7 +76,7 @@ To enable the search and filtering functions, you can optionally have the Reitti
 
 ```yaml
 # Specify the Meilisearch server instance URL
-barassistant_saltrim_environment_variables_meilisearch_url: YOUR_MEILISEARCH_INSTANCE_URL_HERE
+reitti_environment_variables_meilisearch_url: YOUR_MEILISEARCH_INSTANCE_URL_HERE
 
 # Specify a Meilisearch hostname
 barassistant_server_environment_variables_meilisearch_host: YOUR_MEILISEARCH_HOSTNAME_HERE
@@ -85,7 +85,7 @@ barassistant_server_environment_variables_meilisearch_host: YOUR_MEILISEARCH_HOS
 barassistant_server_environment_variables_meilisearch_key: YOUR_MEILISEARCH_KEY_HERE
 ```
 
-You can set the same value to `barassistant_saltrim_environment_variables_meilisearch_url` and `barassistant_server_environment_variables_meilisearch_host` if the Meilisearch is not hosted under a subpath.
+You can set the same value to `reitti_environment_variables_meilisearch_url` and `barassistant_server_environment_variables_meilisearch_host` if the Meilisearch is not hosted under a subpath.
 
 >[!NOTE]
 >

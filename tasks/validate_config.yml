@@ -14,7 +14,7 @@
     - barassistant_uid
     - barassistant_gid
     - barassistant_hostname
-    - barassistant_saltrim_path_prefix
+    - reitti_path_prefix
     - barassistant_container_network
 
 - name: Run if mailer is enabled
@@ -82,7 +82,7 @@
       when: "barassistant_server_container_labels_traefik_metrics_path_prefix != '/' and barassistant_server_container_labels_traefik_metrics_path_prefix[-1] == '/'"
 
 - name: Run if Traefik is enabled for Salt Rim
-  when: barassistant_saltrim_container_labels_traefik_enabled | bool
+  when: reitti_container_labels_traefik_enabled | bool
   block:
     - name: Fail if Traefik settings required for Reitti Salt Rim are not defined
       ansible.builtin.fail:
@@ -90,21 +90,21 @@
           You need to define a required configuration setting (`{{ item }}`).
       when: "lookup('vars', item, default='') | string | length == 0"
       with_items:
-        - barassistant_saltrim_container_labels_traefik_hostname
-        - barassistant_saltrim_container_labels_traefik_path_prefix
+        - reitti_container_labels_traefik_hostname
+        - reitti_container_labels_traefik_path_prefix
 
-    - name: Fail if barassistant_saltrim_container_labels_traefik_path_prefix is different than /
+    - name: Fail if reitti_container_labels_traefik_path_prefix is different than /
       ansible.builtin.fail:
         msg: >-
-          barassistant_saltrim_container_labels_traefik_path_prefix (`{{ barassistant_saltrim_container_labels_traefik_path_prefix }}`) must be `/`.
+          reitti_container_labels_traefik_path_prefix (`{{ reitti_container_labels_traefik_path_prefix }}`) must be `/`.
           Reitti does not support hosting under a subpath yet.
-      when: "barassistant_saltrim_container_labels_traefik_path_prefix != '/'"
+      when: "reitti_container_labels_traefik_path_prefix != '/'"
 
     # We ensure it doesn't end with a slash, because we handle both (slash and no-slash).
-    # Knowing that `barassistant_saltrim_container_labels_traefik_path_prefix` does not end with a slash
+    # Knowing that `reitti_container_labels_traefik_path_prefix` does not end with a slash
     # ensures we know how to set these routes up without having to do "does it end with a slash" checks elsewhere.
-    - name: Fail if barassistant_saltrim_container_labels_traefik_path_prefix ends with a slash
+    - name: Fail if reitti_container_labels_traefik_path_prefix ends with a slash
       ansible.builtin.fail:
         msg: >-
-          barassistant_saltrim_container_labels_traefik_path_prefix (`{{ barassistant_saltrim_container_labels_traefik_path_prefix }}`) must either be `/` or not end with a slash (e.g. `/barassistant`).
-      when: "barassistant_saltrim_container_labels_traefik_path_prefix != '/' and barassistant_saltrim_container_labels_traefik_path_prefix[-1] == '/'"
+          reitti_container_labels_traefik_path_prefix (`{{ reitti_container_labels_traefik_path_prefix }}`) must either be `/` or not end with a slash (e.g. `/barassistant`).
+      when: "reitti_container_labels_traefik_path_prefix != '/' and reitti_container_labels_traefik_path_prefix[-1] == '/'"

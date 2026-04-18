@@ -7,8 +7,8 @@
 - name: Ensure Reitti systemd services are stopped and removed
   ansible.builtin.include_tasks: "{{ role_path }}/tasks/remove_service.yml"
   with_items:
-    - service: "{{ barassistant_saltrim_identifier }}.service"
-      path: "{{ devture_systemd_docker_base_systemd_path }}/{{ barassistant_saltrim_identifier }}.service"
+    - service: "{{ reitti_identifier }}.service"
+      path: "{{ devture_systemd_docker_base_systemd_path }}/{{ reitti_identifier }}.service"
     - { service: "{{ barassistant_server_identifier }}.service", path: "{{ devture_systemd_docker_base_systemd_path }}/{{ barassistant_server_identifier }}.service" }
 
 - name: Ensure Reitti container network does not exist
@@ -76,5 +76,5 @@
   block:
     - name: Ensure Reitti Salt Rim path does not exist
       ansible.builtin.file:
-        path: "{{ barassistant_saltrim_base_path }}"
+        path: "{{ reitti_base_path }}"
         state: absent

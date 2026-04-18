@@ -1,62 +1,62 @@
 {#
 SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
 SPDX-FileCopyrightText: 2023 Slavi Pantaleev
-SPDX-FileCopyrightText: 2025 Suguru Hirahara
+SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 #}
 
-{% if barassistant_saltrim_container_labels_traefik_enabled %}
+{% if reitti_container_labels_traefik_enabled %}
 traefik.enable=true
 
-{% if barassistant_saltrim_container_labels_traefik_docker_network %}
-traefik.docker.network={{ barassistant_saltrim_container_labels_traefik_docker_network }}
+{% if reitti_container_labels_traefik_docker_network %}
+traefik.docker.network={{ reitti_container_labels_traefik_docker_network }}
 {% endif %}
 
 {% set middlewares = [] %}
 
-{% if barassistant_saltrim_container_labels_traefik_path_prefix != '/' %}
-traefik.http.middlewares.{{ barassistant_saltrim_identifier }}-slashless-redirect.redirectregex.regex=^({{ barassistant_saltrim_container_labels_traefik_path_prefix | quote }})$
-traefik.http.middlewares.{{ barassistant_saltrim_identifier }}-slashless-redirect.redirectregex.replacement=${1}/
-{% set middlewares = middlewares + [barassistant_saltrim_identifier + '-slashless-redirect'] %}
+{% if reitti_container_labels_traefik_path_prefix != '/' %}
+traefik.http.middlewares.{{ reitti_identifier }}-slashless-redirect.redirectregex.regex=^({{ reitti_container_labels_traefik_path_prefix | quote }})$
+traefik.http.middlewares.{{ reitti_identifier }}-slashless-redirect.redirectregex.replacement=${1}/
+{% set middlewares = middlewares + [reitti_identifier + '-slashless-redirect'] %}
 {% endif %}
 
-{% if barassistant_saltrim_container_labels_traefik_path_prefix != '/' %}
-traefik.http.middlewares.{{ barassistant_saltrim_identifier }}-strip-prefix.stripprefix.prefixes={{ barassistant_saltrim_container_labels_traefik_path_prefix }}
-{% set middlewares = middlewares + [barassistant_saltrim_identifier + '-strip-prefix'] %}
+{% if reitti_container_labels_traefik_path_prefix != '/' %}
+traefik.http.middlewares.{{ reitti_identifier }}-strip-prefix.stripprefix.prefixes={{ reitti_container_labels_traefik_path_prefix }}
+{% set middlewares = middlewares + [reitti_identifier + '-strip-prefix'] %}
 {% endif %}
 
-{% if barassistant_saltrim_container_labels_traefik_additional_request_headers.keys() | length > 0 %}
-{% for name, value in barassistant_saltrim_container_labels_traefik_additional_request_headers.items() %}
-traefik.http.middlewares.{{ barassistant_saltrim_identifier }}-add-request-headers.headers.customrequestheaders.{{ name }}={{ value }}
+{% if reitti_container_labels_traefik_additional_request_headers.keys() | length > 0 %}
+{% for name, value in reitti_container_labels_traefik_additional_request_headers.items() %}
+traefik.http.middlewares.{{ reitti_identifier }}-add-request-headers.headers.customrequestheaders.{{ name }}={{ value }}
 {% endfor %}
-{% set middlewares = middlewares + [barassistant_saltrim_identifier + '-add-request-headers'] %}
+{% set middlewares = middlewares + [reitti_identifier + '-add-request-headers'] %}
 {% endif %}
 
-{% if barassistant_saltrim_container_labels_traefik_additional_response_headers.keys() | length > 0 %}
-{% for name, value in barassistant_saltrim_container_labels_traefik_additional_response_headers.items() %}
-traefik.http.middlewares.{{ barassistant_saltrim_identifier }}-add-response-headers.headers.customresponseheaders.{{ name }}={{ value }}
+{% if reitti_container_labels_traefik_additional_response_headers.keys() | length > 0 %}
+{% for name, value in reitti_container_labels_traefik_additional_response_headers.items() %}
+traefik.http.middlewares.{{ reitti_identifier }}-add-response-headers.headers.customresponseheaders.{{ name }}={{ value }}
 {% endfor %}
-{% set middlewares = middlewares + [barassistant_saltrim_identifier + '-add-response-headers'] %}
+{% set middlewares = middlewares + [reitti_identifier + '-add-response-headers'] %}
 {% endif %}
 
-traefik.http.routers.{{ barassistant_saltrim_identifier }}.rule={{ barassistant_saltrim_container_labels_traefik_rule }}
-{% if barassistant_saltrim_container_labels_traefik_priority | int > 0 %}
-traefik.http.routers.{{ barassistant_saltrim_identifier }}.priority={{ barassistant_saltrim_container_labels_traefik_priority }}
+traefik.http.routers.{{ reitti_identifier }}.rule={{ reitti_container_labels_traefik_rule }}
+{% if reitti_container_labels_traefik_priority | int > 0 %}
+traefik.http.routers.{{ reitti_identifier }}.priority={{ reitti_container_labels_traefik_priority }}
 {% endif %}
-traefik.http.routers.{{ barassistant_saltrim_identifier }}.service={{ barassistant_saltrim_identifier }}
+traefik.http.routers.{{ reitti_identifier }}.service={{ reitti_identifier }}
 {% if middlewares | length > 0 %}
-traefik.http.routers.{{ barassistant_saltrim_identifier }}.middlewares={{ middlewares | join(',') }}
+traefik.http.routers.{{ reitti_identifier }}.middlewares={{ middlewares | join(',') }}
 {% endif %}
-traefik.http.routers.{{ barassistant_saltrim_identifier }}.entrypoints={{ barassistant_saltrim_container_labels_traefik_entrypoints }}
-traefik.http.routers.{{ barassistant_saltrim_identifier }}.tls={{ barassistant_saltrim_container_labels_traefik_tls | to_json }}
-{% if barassistant_saltrim_container_labels_traefik_tls %}
-traefik.http.routers.{{ barassistant_saltrim_identifier }}.tls.certResolver={{ barassistant_saltrim_container_labels_traefik_tls_certResolver }}
-{% endif %}
-
-traefik.http.services.{{ barassistant_saltrim_identifier }}.loadbalancer.server.port={{ barassistant_saltrim_container_http_port }}
+traefik.http.routers.{{ reitti_identifier }}.entrypoints={{ reitti_container_labels_traefik_entrypoints }}
+traefik.http.routers.{{ reitti_identifier }}.tls={{ reitti_container_labels_traefik_tls | to_json }}
+{% if reitti_container_labels_traefik_tls %}
+traefik.http.routers.{{ reitti_identifier }}.tls.certResolver={{ reitti_container_labels_traefik_tls_certResolver }}
 {% endif %}
 
-{% for arg in barassistant_saltrim_container_labels_additional_labels %}
+traefik.http.services.{{ reitti_identifier }}.loadbalancer.server.port={{ reitti_container_http_port }}
+{% endif %}
+
+{% for arg in reitti_container_labels_additional_labels %}
 {{ arg }}
 {% endfor %}

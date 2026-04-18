@@ -1,18 +1,18 @@
 {#
 SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
-SPDX-FileCopyrightText: 2025 Suguru Hirahara
+SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 #}
 
-TZ={{ barassistant_saltrim_environment_variables_tz }}
+TZ={{ reitti_environment_variables_tz }}
 
 API_URL={{ barassistant_environment_variables_server_url }}
 
-{% if barassistant_saltrim_environment_variables_meilisearch_url != '' %}
-MEILISEARCH_URL={{ barassistant_saltrim_environment_variables_meilisearch_url }}
+{% if reitti_environment_variables_meilisearch_url != '' %}
+MEILISEARCH_URL={{ reitti_environment_variables_meilisearch_url }}
 {% endif %}
 
 MAILS_ENABLED={{ barassistant_mailer_enabled | to_json }}
 
-{{ barassistant_saltrim_environment_variables_additional_variables }}
+{{ reitti_environment_variables_additional_variables }}

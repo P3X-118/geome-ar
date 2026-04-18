@@ -7,12 +7,12 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 #}
 
 [Unit]
-Description=Reitti Salt Rim ({{ barassistant_saltrim_identifier }})
-{% for service in barassistant_saltrim_systemd_required_services_list %}
+Description=Reitti Salt Rim ({{ reitti_identifier }})
+{% for service in reitti_systemd_required_services_list %}
 Requires={{ service }}
 After={{ service }}
 {% endfor %}
-{% for service in barassistant_saltrim_systemd_wanted_services_list %}
+{% for service in reitti_systemd_wanted_services_list %}
 Wants={{ service }}
 {% endfor %}
 DefaultDependencies=no
@@ -20,39 +20,39 @@ DefaultDependencies=no
 [Service]
 Type=simple
 Environment="HOME={{ devture_systemd_docker_base_systemd_unit_home_path }}"
-ExecStartPre={{ devture_systemd_docker_base_host_command_sh }} -c '{{ barassistant_saltrim_container_cleanup_command | trim | replace("\n", " ") }}'
+ExecStartPre={{ devture_systemd_docker_base_host_command_sh }} -c '{{ reitti_container_cleanup_command | trim | replace("\n", " ") }}'
 
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       --rm \
-      --name={{ barassistant_saltrim_identifier }} \
+      --name={{ reitti_identifier }} \
       --log-driver=none \
       --cap-drop=ALL \
-      --network={{ barassistant_saltrim_container_network }} \
-      {% if barassistant_saltrim_container_http_host_bind_port %}
-      -p {{ barassistant_saltrim_container_http_host_bind_port }}:{{ barassistant_saltrim_container_http_port }} \
+      --network={{ reitti_container_network }} \
+      {% if reitti_container_http_host_bind_port %}
+      -p {{ reitti_container_http_host_bind_port }}:{{ reitti_container_http_port }} \
       {% endif %}
-      --env-file={{ barassistant_saltrim_base_path }}/env \
-      --label-file={{ barassistant_saltrim_base_path }}/labels \
-      {% for volume in barassistant_saltrim_container_additional_volumes %}
+      --env-file={{ reitti_base_path }}/env \
+      --label-file={{ reitti_base_path }}/labels \
+      {% for volume in reitti_container_additional_volumes %}
       --mount type={{ volume.type | default('bind' if '/' in volume.src else 'volume') }},src={{ volume.src }},dst={{ volume.dst }}{{ (',' + volume.options) if volume.options | default('') else '' }} \
       {% endfor %}
-      {% for arg in barassistant_saltrim_container_extra_arguments %}
+      {% for arg in reitti_container_extra_arguments %}
       {{ arg }} \
       {% endfor %}
-      {{ barassistant_saltrim_container_image }}
+      {{ reitti_container_image }}
 
-{% for network in barassistant_saltrim_container_additional_networks %}
-ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ barassistant_saltrim_identifier }}
+{% for network in reitti_container_additional_networks %}
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ reitti_identifier }}
 {% endfor %}
 
-ExecStart={{ devture_systemd_docker_base_host_command_docker }} start --attach {{ barassistant_saltrim_identifier }}
+ExecStart={{ devture_systemd_docker_base_host_command_docker }} start --attach {{ reitti_identifier }}
 
-ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop -t {{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ barassistant_saltrim_identifier }} 2>/dev/null || true'
-ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ barassistant_saltrim_identifier }} 2>/dev/null || true'
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop -t {{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ reitti_identifier }} 2>/dev/null || true'
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ reitti_identifier }} 2>/dev/null || true'
 
 Restart=always
 RestartSec=30
-SyslogIdentifier={{ barassistant_saltrim_identifier }}
+SyslogIdentifier={{ reitti_identifier }}
 
 [Install]
 WantedBy=multi-user.target
