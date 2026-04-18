@@ -12,7 +12,6 @@
 reitti_enabled: true
 
 reitti_identifier: reitti
-reitti_base_path: "/{{ reitti_identifier }}"
 reitti_base_path: "{{ reitti_base_path }}/reitti"
 reitti_tilecache_base_path: "{{ reitti_base_path }}/server"
 reitti_tilecache_data_path: "{{ reitti_tilecache_base_path }}/data"
@@ -50,8 +49,6 @@ reitti_restart_necessary: false
 # reitti                                                               #
 #                                                                      #
 ########################################################################
-
-reitti_identifier: reitti
 
 # renovate: datasource=docker depName=reitti/salt-rim
 reitti_version: 4.14.1
