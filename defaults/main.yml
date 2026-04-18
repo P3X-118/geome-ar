@@ -325,21 +325,6 @@ reitti_tilecache_container_labels_traefik_entrypoints: web-secure
 reitti_tilecache_container_labels_traefik_tls: "{{ reitti_tilecache_container_labels_traefik_entrypoints != 'web' }}"
 reitti_tilecache_container_labels_traefik_tls_certResolver: default  # noqa var-naming
 
-# Controls if labels are added to expose the Prometheus metrics publicly.
-reitti_tilecache_container_labels_traefik_metrics_enabled: "{{ reitti_tilecache_environment_variables_metrics_enabled }}"
-reitti_tilecache_container_labels_traefik_metrics_hostname: "{{ reitti_tilecache_hostname }}"
-# The path prefix must either be `/` or not end with a slash (e.g. `/metrics`).
-reitti_tilecache_container_labels_traefik_metrics_path_prefix: /metrics
-reitti_tilecache_container_labels_traefik_metrics_rule: "Host(`{{ reitti_tilecache_container_labels_traefik_metrics_hostname }}`){% if reitti_tilecache_container_labels_traefik_metrics_path_prefix != '/' %} && PathPrefix(`{{ reitti_tilecache_container_labels_traefik_metrics_path_prefix }}`){% endif %}"
-reitti_tilecache_container_labels_traefik_metrics_priority: 0
-reitti_tilecache_container_labels_traefik_metrics_entrypoints: "{{ reitti_tilecache_container_labels_traefik_entrypoints }}"
-reitti_tilecache_container_labels_traefik_metrics_middlewares: []
-reitti_tilecache_container_labels_traefik_metrics_tls: "{{ reitti_tilecache_container_labels_traefik_metrics_entrypoints != 'web' }}"
-reitti_tilecache_container_labels_traefik_metrics_tls_certResolver: "{{ reitti_tilecache_container_labels_traefik_tls_certResolver }}"  # noqa var-naming
-reitti_tilecache_container_labels_traefik_metrics_middleware_basic_auth_enabled: false
-# See: https://doc.traefik.io/traefik/reference/routing-configuration/http/middlewares/basicauth/
-reitti_tilecache_container_labels_traefik_metrics_middleware_basic_auth_users: ""
-
 # Controls which additional headers to attach to all HTTP requests.
 # To add your own custom request headers, use `reitti_tilecache_container_labels_traefik_additional_request_headers_custom`
 reitti_tilecache_container_labels_traefik_additional_request_headers: "{{ reitti_tilecache_container_labels_traefik_additional_request_headers_auto | combine(reitti_tilecache_container_labels_traefik_additional_request_headers_custom) }}"

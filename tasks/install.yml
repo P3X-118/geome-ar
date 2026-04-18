@@ -42,25 +42,6 @@
     - { src: "{{ role_path }}/templates/env_tilecache.j2", dest: "{{ reitti_tilecache_base_path }}/env" }
   register: reitti_support_files_result
 
-- name: Run if Traefik is enabled for Prometheus endpoint
-  # This task updates the IP address allowed to access to the metrics by Reitti tile cache server.
-  when: reitti_tilecache_environment_variables_metrics_enabled | bool and reitti_tilecache_environment_variables_metrics_allowed_ips == ''
-  block:
-    - name: Check IPv4Address of the Traefik network in Docker for Reitti tile cache server metrics
-      ansible.builtin.shell:
-        cmd: |
-          set -o pipefail
-          {{ devture_systemd_docker_base_host_command_docker }} inspect traefik | grep -A 5 '{{ reitti_tilecache_traefik_name }}' | grep 'IPv4Address' | awk '{%raw%}{print $2}{%endraw%}' | tr -d '\" ' | cut -d'/' -f1
-        executable: /bin/bash
-      register: reitti_tilecache_traefik_ipv4address
-      changed_when: false
-
-    - name: Ensure the IPv4Address allowed to access to the metrics by Reitti tile cache server is updated
-      ansible.builtin.replace:
-        path: "{{ reitti_tilecache_base_path }}/env"
-        regexp: "METRICS_ALLOWED_IPS=(|.*?)"
-        replace: "METRICS_ALLOWED_IPS={{ reitti_tilecache_traefik_ipv4address.stdout }}"
-
 - name: Ensure Reitti container images are pulled
   community.docker.docker_image:
     name: "{{ item.image }}"

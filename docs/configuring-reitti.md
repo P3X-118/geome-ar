@@ -95,12 +95,6 @@ reitti_redis_port: 6379
 
 Make sure to replace `YOUR_REDIS_SERVER_HOSTNAME_HERE` with your own value.
 
-### Integrating with Prometheus (optional)
-
-Reitti tile cache server can natively expose metrics to Prometheus.
-
-If you are looking for an integration, you can check out the MASH playbook. See [this section of the documentation on the playbook](https://github.com/mother-of-all-self-hosting/mash-playbook/blob/main/docs/services/reitti.md#integrating-with-prometheus-optional) for more information.
-
 ### Extending the configuration
 
 There are some additional things you may wish to configure about the service.
