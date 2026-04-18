@@ -1,24 +1,24 @@
 {#
 SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
 SPDX-FileCopyrightText: 2024 Nikita Chernyi
-SPDX-FileCopyrightText: 2025 Suguru Hirahara
+SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 #}
 
-TZ={{ barassistant_server_environment_variables_tz }}
+TZ={{ reitti_tilecache_environment_variables_tz }}
 
 API_URL={{ barassistant_environment_variables_server_url }}
 
 APP_URL={{ barassistant_environment_variables_app_url }}
 
-{% if barassistant_server_environment_variables_meilisearch_host != '' %}
-MEILISEARCH_HOST={{ barassistant_server_environment_variables_meilisearch_host }}
-MEILISEARCH_KEY={{ barassistant_server_environment_variables_meilisearch_key }}
+{% if reitti_tilecache_environment_variables_meilisearch_host != '' %}
+MEILISEARCH_HOST={{ reitti_tilecache_environment_variables_meilisearch_host }}
+MEILISEARCH_KEY={{ reitti_tilecache_environment_variables_meilisearch_key }}
 {% endif %}
 
-METRICS_ENABLED={{ barassistant_server_environment_variables_metrics_enabled | to_json }}
-METRICS_ALLOWED_IPS={{ barassistant_server_environment_variables_metrics_allowed_ips }}
+METRICS_ENABLED={{ reitti_tilecache_environment_variables_metrics_enabled | to_json }}
+METRICS_ALLOWED_IPS={{ reitti_tilecache_environment_variables_metrics_allowed_ips }}
 
 {% if barassistant_redis_hostname != '' %}
 REDIS_HOST={{ barassistant_redis_hostname }}
@@ -29,23 +29,23 @@ CACHE_DRIVER=file
 SESSION_DRIVER=file
 {% endif %}
 
-ALLOW_REGISTRATION={{ barassistant_server_environment_variables_allow_registration | to_json }}
+ALLOW_REGISTRATION={{ reitti_tilecache_environment_variables_allow_registration | to_json }}
 
 {% if barassistant_mailer_enabled %}
-MAIL_MAILER={{ barassistant_server_environment_variables_mail_mailer }}
+MAIL_MAILER={{ reitti_tilecache_environment_variables_mail_mailer }}
 
-{% if barassistant_server_environment_variables_mail_mailer == 'smtp' %}
-MAIL_HOST={{ barassistant_server_environment_variables_mail_host }}
-MAIL_PORT={{ barassistant_server_environment_variables_mail_port }}
-MAIL_ENCRYPTION={{ barassistant_server_environment_variables_mail_encryption }}
-MAIL_USERNAME={{ barassistant_server_environment_variables_mail_username }}
-MAIL_PASSWORD={{ barassistant_server_environment_variables_mail_password }}
-MAIL_FROM_ADDRESS={{ barassistant_server_environment_variables_mail_from_address }}
-MAIL_FROM_NAME={{ barassistant_server_environment_variables_mail_from_name }}
+{% if reitti_tilecache_environment_variables_mail_mailer == 'smtp' %}
+MAIL_HOST={{ reitti_tilecache_environment_variables_mail_host }}
+MAIL_PORT={{ reitti_tilecache_environment_variables_mail_port }}
+MAIL_ENCRYPTION={{ reitti_tilecache_environment_variables_mail_encryption }}
+MAIL_USERNAME={{ reitti_tilecache_environment_variables_mail_username }}
+MAIL_PASSWORD={{ reitti_tilecache_environment_variables_mail_password }}
+MAIL_FROM_ADDRESS={{ reitti_tilecache_environment_variables_mail_from_address }}
+MAIL_FROM_NAME={{ reitti_tilecache_environment_variables_mail_from_name }}
 {% endif %}
 
 {% endif %}
 
-APP_DEBUG={{ barassistant_server_environment_variables_app_debug | to_json }}
+APP_DEBUG={{ reitti_tilecache_environment_variables_app_debug | to_json }}
 
-{{ barassistant_server_environment_variables_additional_variables }}
+{{ reitti_tilecache_environment_variables_additional_variables }}

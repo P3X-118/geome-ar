@@ -23,11 +23,11 @@
     - name: Fail if Reitti server mailer driver is invalid
       ansible.builtin.fail:
         msg: >-
-          barassistant_server_environment_variables_mail_mailer must be 'log' or 'smtp'
-      when: "barassistant_server_environment_variables_mail_mailer not in ['log', 'smtp']"
+          reitti_tilecache_environment_variables_mail_mailer must be 'log' or 'smtp'
+      when: "reitti_tilecache_environment_variables_mail_mailer not in ['log', 'smtp']"
 
     - name: Run if mailer is set to SMTP
-      when: barassistant_server_environment_variables_mail_mailer == 'smtp'
+      when: reitti_tilecache_environment_variables_mail_mailer == 'smtp'
       block:
         - name: Fail if mailer setting is missing
           ansible.builtin.fail:
@@ -35,11 +35,11 @@
               You need to define a required configuration setting (`{{ item }}`) to correctly set up the SMTP mailer.
           when: "lookup('vars', item, default='') | string | length == 0"
           with_items:
-            - barassistant_server_environment_variables_mail_host
-            - barassistant_server_environment_variables_mail_from_address
+            - reitti_tilecache_environment_variables_mail_host
+            - reitti_tilecache_environment_variables_mail_from_address
 
 - name: Run if Traefik is enabled for the server
-  when: barassistant_server_container_labels_traefik_enabled | bool
+  when: reitti_tilecache_container_labels_traefik_enabled | bool
   block:
     - name: Fail if Traefik settings required for Reitti server are not defined
       ansible.builtin.fail:
@@ -47,20 +47,20 @@
           You need to define a required configuration setting (`{{ item }}`).
       when: "lookup('vars', item, default='') | string | length == 0"
       with_items:
-        - barassistant_server_container_labels_traefik_hostname
-        - barassistant_server_container_labels_traefik_path_prefix
+        - reitti_tilecache_container_labels_traefik_hostname
+        - reitti_tilecache_container_labels_traefik_path_prefix
 
     # We ensure it doesn't end with a slash, because we handle both (slash and no-slash).
-    # Knowing that `barassistant_server_container_labels_traefik_path_prefix` does not end with a slash
+    # Knowing that `reitti_tilecache_container_labels_traefik_path_prefix` does not end with a slash
     # ensures we know how to set these routes up without having to do "does it end with a slash" checks elsewhere.
-    - name: Fail if barassistant_server_container_labels_traefik_path_prefix ends with a slash
+    - name: Fail if reitti_tilecache_container_labels_traefik_path_prefix ends with a slash
       ansible.builtin.fail:
         msg: >-
-          barassistant_server_container_labels_traefik_path_prefix (`{{ barassistant_server_container_labels_traefik_path_prefix }}`) must either be `/` or not end with a slash (e.g. `/barassistant`).
-      when: "barassistant_server_container_labels_traefik_path_prefix != '/' and barassistant_server_container_labels_traefik_path_prefix[-1] == '/'"
+          reitti_tilecache_container_labels_traefik_path_prefix (`{{ reitti_tilecache_container_labels_traefik_path_prefix }}`) must either be `/` or not end with a slash (e.g. `/barassistant`).
+      when: "reitti_tilecache_container_labels_traefik_path_prefix != '/' and reitti_tilecache_container_labels_traefik_path_prefix[-1] == '/'"
 
 - name: Run if Traefik is enabled for Prometheus endpoint
-  when: barassistant_server_environment_variables_metrics_enabled | bool
+  when: reitti_tilecache_environment_variables_metrics_enabled | bool
   block:
     - name: Fail if Traefik settings required for Opengist metrics endpoint are not defined
       ansible.builtin.fail:
@@ -68,18 +68,18 @@
           You need to define a required configuration setting (`{{ item.name }}`) for using this role.
       when: "item.when | bool and lookup('vars', item.name, default='') | string | length == 0"
       with_items:
-        - { "name": "barassistant_server_container_labels_traefik_metrics_hostname", when: true }
-        - { "name": "barassistant_server_container_labels_traefik_metrics_path_prefix", when: true }
-        - { "name": "barassistant_server_container_labels_traefik_metrics_middleware_basic_auth_users", when: "{{ barassistant_server_container_labels_traefik_metrics_middleware_basic_auth_enabled }}" }
+        - { "name": "reitti_tilecache_container_labels_traefik_metrics_hostname", when: true }
+        - { "name": "reitti_tilecache_container_labels_traefik_metrics_path_prefix", when: true }
+        - { "name": "reitti_tilecache_container_labels_traefik_metrics_middleware_basic_auth_users", when: "{{ reitti_tilecache_container_labels_traefik_metrics_middleware_basic_auth_enabled }}" }
 
     # We ensure it doesn't end with a slash, because we handle both (slash and no-slash).
-    # Knowing that `barassistant_server_container_labels_traefik_metrics_path_prefix` does not end with a slash
+    # Knowing that `reitti_tilecache_container_labels_traefik_metrics_path_prefix` does not end with a slash
     # ensures we know how to set these routes up without having to do "does it end with a slash" checks elsewhere.
-    - name: Fail if barassistant_server_container_labels_traefik_metrics_path_prefix ends with a slash
+    - name: Fail if reitti_tilecache_container_labels_traefik_metrics_path_prefix ends with a slash
       ansible.builtin.fail:
         msg: >-
-          barassistant_server_container_labels_traefik_metrics_path_prefix (`{{ barassistant_server_container_labels_traefik_metrics_path_prefix }}`) must either be `/` or not end with a slash (e.g. `/metrics`).
-      when: "barassistant_server_container_labels_traefik_metrics_path_prefix != '/' and barassistant_server_container_labels_traefik_metrics_path_prefix[-1] == '/'"
+          reitti_tilecache_container_labels_traefik_metrics_path_prefix (`{{ reitti_tilecache_container_labels_traefik_metrics_path_prefix }}`) must either be `/` or not end with a slash (e.g. `/metrics`).
+      when: "reitti_tilecache_container_labels_traefik_metrics_path_prefix != '/' and reitti_tilecache_container_labels_traefik_metrics_path_prefix[-1] == '/'"
 
 - name: Run if Traefik is enabled for Salt Rim
   when: reitti_container_labels_traefik_enabled | bool

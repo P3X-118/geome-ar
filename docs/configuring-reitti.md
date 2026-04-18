@@ -67,7 +67,7 @@ After adjusting the hostname, make sure to adjust your DNS records to point the 
 By default this role is configured to disable signing up for an account on the service. To enable it, add the following configuration to your `vars.yml` file:
 
 ```yaml
-barassistant_server_environment_variables_allow_registration: true
+reitti_tilecache_environment_variables_allow_registration: true
 ```
 
 ### Connecting to a Meilisearch instance (optional)
@@ -79,13 +79,13 @@ To enable the search and filtering functions, you can optionally have the Reitti
 reitti_environment_variables_meilisearch_url: YOUR_MEILISEARCH_INSTANCE_URL_HERE
 
 # Specify a Meilisearch hostname
-barassistant_server_environment_variables_meilisearch_host: YOUR_MEILISEARCH_HOSTNAME_HERE
+reitti_tilecache_environment_variables_meilisearch_host: YOUR_MEILISEARCH_HOSTNAME_HERE
 
 # Specify a Meilisearch API key
-barassistant_server_environment_variables_meilisearch_key: YOUR_MEILISEARCH_KEY_HERE
+reitti_tilecache_environment_variables_meilisearch_key: YOUR_MEILISEARCH_KEY_HERE
 ```
 
-You can set the same value to `reitti_environment_variables_meilisearch_url` and `barassistant_server_environment_variables_meilisearch_host` if the Meilisearch is not hosted under a subpath.
+You can set the same value to `reitti_environment_variables_meilisearch_url` and `reitti_tilecache_environment_variables_meilisearch_host` if the Meilisearch is not hosted under a subpath.
 
 >[!NOTE]
 >
@@ -117,29 +117,29 @@ To configure it, add the following configuration to your `vars.yml` file as belo
 ```yaml
 barassistant_mailer_enabled: true
 
-barassistant_server_environment_variables_mail_mailer: smtp
+reitti_tilecache_environment_variables_mail_mailer: smtp
 
 # Specify SMTP server hostname
-barassistant_server_environment_variables_mail_host: ""
+reitti_tilecache_environment_variables_mail_host: ""
 
 # Specify SMTP server port
-barassistant_server_environment_variables_mail_port: 587
+reitti_tilecache_environment_variables_mail_port: 587
 
 # Specify SMTP server encryption
 # Set `tls` to enable TLS encryption
-barassistant_server_environment_variables_mail_encryption: ""
+reitti_tilecache_environment_variables_mail_encryption: ""
 
 # Specify SMTP server username
-barassistant_server_environment_variables_mail_username: ""
+reitti_tilecache_environment_variables_mail_username: ""
 
 # Specify SMTP server password
-barassistant_server_environment_variables_mail_password: ""
+reitti_tilecache_environment_variables_mail_password: ""
 
 # Specify the email address that emails will be sent from
-barassistant_server_environment_variables_mail_from_address: ""
+reitti_tilecache_environment_variables_mail_from_address: ""
 
 # Specify the name that emails will be sent from
-barassistant_server_environment_variables_mail_from_name: ""
+reitti_tilecache_environment_variables_mail_from_name: ""
 ```
 
 See [this page](https://docs.barassistant.app/setup/mailing/) on the official documentation for details.
@@ -177,7 +177,7 @@ After running the command for installation, Reitti's API server becomes availabl
 
 To get started, open the Salt Rim's URL with a web browser, and register the account. **Note that the first registered user becomes an administrator automatically.**
 
-Since account registration is disabled by default, you need to enable it first by setting `barassistant_server_environment_variables_allow_registration` to `true` temporarily in order to create your own account.
+Since account registration is disabled by default, you need to enable it first by setting `reitti_tilecache_environment_variables_allow_registration` to `true` temporarily in order to create your own account.
 
 ## Troubleshooting
 

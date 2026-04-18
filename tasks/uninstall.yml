@@ -9,7 +9,7 @@
   with_items:
     - service: "{{ reitti_identifier }}.service"
       path: "{{ devture_systemd_docker_base_systemd_path }}/{{ reitti_identifier }}.service"
-    - { service: "{{ barassistant_server_identifier }}.service", path: "{{ devture_systemd_docker_base_systemd_path }}/{{ barassistant_server_identifier }}.service" }
+    - { service: "{{ reitti_tilecache_identifier }}.service", path: "{{ devture_systemd_docker_base_systemd_path }}/{{ reitti_tilecache_identifier }}.service" }
 
 - name: Ensure Reitti container network does not exist
   when: barassistant_container_network_deletion_enabled
@@ -34,7 +34,7 @@
   block:
     - name: Ensure Reitti server support files do not exist
       ansible.builtin.file:
-        path: "{{ barassistant_server_base_path }}/{{ item }}"
+        path: "{{ reitti_tilecache_base_path }}/{{ item }}"
         state: absent
       with_items:
         - env
@@ -42,33 +42,33 @@
 
     - name: Ensure Reitti server local data path does not exist if empty
       ansible.builtin.command:
-        cmd: "rmdir {{ barassistant_server_data_path }}"
-      register: barassistant_server_data_path_deletion_result
-      changed_when: barassistant_server_data_path_deletion_result.rc == 0
+        cmd: "rmdir {{ reitti_tilecache_data_path }}"
+      register: reitti_tilecache_data_path_deletion_result
+      changed_when: reitti_tilecache_data_path_deletion_result.rc == 0
       failed_when: false
 
     - name: Ensure Reitti server base path does not exist if empty
       ansible.builtin.command:
-        cmd: "rmdir {{ barassistant_server_base_path }}"
-      register: barassistant_server_base_path_deletion_result
-      changed_when: barassistant_server_base_path_deletion_result.rc == 0
+        cmd: "rmdir {{ reitti_tilecache_base_path }}"
+      register: reitti_tilecache_base_path_deletion_result
+      changed_when: reitti_tilecache_base_path_deletion_result.rc == 0
       failed_when: false
 
     - name: Check existence of Reitti server local data path
       ansible.builtin.stat:
-        path: "{{ barassistant_server_data_path }}"
-      register: barassistant_server_data_path_stat
+        path: "{{ reitti_tilecache_data_path }}"
+      register: reitti_tilecache_data_path_stat
 
     # We just want to notify the user. Deleting data is too destructive.
     - name: Inject the message about the remaining Reitti server local data path
-      when: barassistant_server_data_path_stat.stat.exists | bool
+      when: reitti_tilecache_data_path_stat.stat.exists | bool
       ansible.builtin.set_fact:
         devture_playbook_runtime_messages_list: |
           {{
             devture_playbook_runtime_messages_list | default([])
             +
             [
-              "Note: As the local Reitti instance has been removed, some old data remains in `" + barassistant_server_data_path + "`. Feel free to delete it."
+              "Note: As the local Reitti instance has been removed, some old data remains in `" + reitti_tilecache_data_path + "`. Feel free to delete it."
             ]
           }}
 

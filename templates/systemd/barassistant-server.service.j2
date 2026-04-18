@@ -7,12 +7,12 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 #}
 
 [Unit]
-Description=Reitti server ({{ barassistant_server_identifier }})
-{% for service in barassistant_server_systemd_required_services_list %}
+Description=Reitti server ({{ reitti_tilecache_identifier }})
+{% for service in reitti_tilecache_systemd_required_services_list %}
 Requires={{ service }}
 After={{ service }}
 {% endfor %}
-{% for service in barassistant_server_systemd_wanted_services_list %}
+{% for service in reitti_tilecache_systemd_wanted_services_list %}
 Wants={{ service }}
 {% endfor %}
 DefaultDependencies=no
@@ -20,44 +20,44 @@ DefaultDependencies=no
 [Service]
 Type=simple
 Environment="HOME={{ devture_systemd_docker_base_systemd_unit_home_path }}"
-ExecStartPre={{ devture_systemd_docker_base_host_command_sh }} -c '{{ barassistant_server_container_cleanup_command | trim | replace("\n", " ") }}'
+ExecStartPre={{ devture_systemd_docker_base_host_command_sh }} -c '{{ reitti_tilecache_container_cleanup_command | trim | replace("\n", " ") }}'
 
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       --rm \
-      --name={{ barassistant_server_identifier }} \
+      --name={{ reitti_tilecache_identifier }} \
       --log-driver=none \
       --cap-drop=ALL \
       --cap-add=CAP_DAC_OVERRIDE \
       --cap-add=CHOWN \
       --cap-add=SETGID \
       --cap-add=SETUID \
-      --network={{ barassistant_server_container_network }} \
-      {% if barassistant_server_container_http_host_bind_port %}
-      -p {{ barassistant_server_container_http_host_bind_port }}:{{ barassistant_server_container_http_port }} \
+      --network={{ reitti_tilecache_container_network }} \
+      {% if reitti_tilecache_container_http_host_bind_port %}
+      -p {{ reitti_tilecache_container_http_host_bind_port }}:{{ reitti_tilecache_container_http_port }} \
       {% endif %}
-      --env-file={{ barassistant_server_base_path }}/env \
-      --label-file={{ barassistant_server_base_path }}/labels \
-      --mount type=bind,src={{ barassistant_server_data_path }},dst=/var/www/cocktails/storage/bar-assistant \
-      {% for volume in barassistant_server_container_additional_volumes %}
+      --env-file={{ reitti_tilecache_base_path }}/env \
+      --label-file={{ reitti_tilecache_base_path }}/labels \
+      --mount type=bind,src={{ reitti_tilecache_data_path }},dst=/var/www/cocktails/storage/bar-assistant \
+      {% for volume in reitti_tilecache_container_additional_volumes %}
       --mount type={{ volume.type | default('bind' if '/' in volume.src else 'volume') }},src={{ volume.src }},dst={{ volume.dst }}{{ (',' + volume.options) if volume.options | default('') else '' }} \
       {% endfor %}
-      {% for arg in barassistant_server_container_extra_arguments %}
+      {% for arg in reitti_tilecache_container_extra_arguments %}
       {{ arg }} \
       {% endfor %}
-      {{ barassistant_server_container_image }}
+      {{ reitti_tilecache_container_image }}
 
-{% for network in barassistant_server_container_additional_networks %}
-ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ barassistant_server_identifier }}
+{% for network in reitti_tilecache_container_additional_networks %}
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ reitti_tilecache_identifier }}
 {% endfor %}
 
-ExecStart={{ devture_systemd_docker_base_host_command_docker }} start --attach {{ barassistant_server_identifier }}
+ExecStart={{ devture_systemd_docker_base_host_command_docker }} start --attach {{ reitti_tilecache_identifier }}
 
-ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop -t {{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ barassistant_server_identifier }} 2>/dev/null || true'
-ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ barassistant_server_identifier }} 2>/dev/null || true'
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop -t {{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ reitti_tilecache_identifier }} 2>/dev/null || true'
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ reitti_tilecache_identifier }} 2>/dev/null || true'
 
 Restart=always
 RestartSec=30
-SyslogIdentifier={{ barassistant_server_identifier }}
+SyslogIdentifier={{ reitti_tilecache_identifier }}
 
 [Install]
 WantedBy=multi-user.target
