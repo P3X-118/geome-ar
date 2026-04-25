@@ -314,7 +314,7 @@ reitti_tilecache_container_additional_volumes_custom: []
 # See `../templates/labels_tilecache.j2` for details.
 #
 # To inject your own other container labels, see `reitti_tilecache_container_labels_additional_labels_custom`.
-reitti_tilecache_container_labels_traefik_enabled: true
+reitti_tilecache_container_labels_traefik_enabled: false
 reitti_tilecache_container_labels_traefik_docker_network: "{{ reitti_tilecache_container_network }}"
 reitti_tilecache_container_labels_traefik_hostname: "{{ reitti_tilecache_hostname }}"
 # The path prefix must either be `/` or not end with a slash (e.g. `/server`).
