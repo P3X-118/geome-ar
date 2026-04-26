@@ -43,7 +43,7 @@ reitti_restart_necessary: false
 ########################################################################
 
 # renovate: datasource=docker depName=dedicatedcode/reitti
-reitti_version: 4.0.0
+reitti_version: 4.0.4
 
 reitti_scheme: https
 
@@ -268,7 +268,7 @@ reitti_environment_variables_additional_variables: ""
 reitti_tilecache_identifier: "{{ reitti_identifier }}-tilecache"
 
 # renovate: datasource=docker depName=dedicatedcode/reitti-tile-cache
-reitti_tilecache_version: 4.0.0
+reitti_tilecache_version: 4.0.4
 
 reitti_tilecache_scheme: http
 
