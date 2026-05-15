@@ -9,24 +9,24 @@
 ---
 # Project source code URL: https://github.com/dedicatedcode/reitti
 
-reitti_enabled: true
+geome_enabled: true
 
-reitti_identifier: reitti
-reitti_base_path: "/{{ reitti_identifier }}"
-reitti_data_path: "{{ reitti_base_path }}/data"
-reitti_tilecache_base_path: "{{ reitti_base_path }}/tilecache"
-reitti_tilecache_data_path: "{{ reitti_tilecache_base_path }}/data"
+geome_identifier: geome
+geome_base_path: "/{{ geome_identifier }}"
+geome_data_path: "{{ geome_base_path }}/data"
+geome_tilecache_base_path: "{{ geome_base_path }}/tilecache"
+geome_tilecache_data_path: "{{ geome_tilecache_base_path }}/data"
 
-reitti_uid: ""
-reitti_gid: ""
+geome_uid: ""
+geome_gid: ""
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.
-reitti_container_network: "{{ reitti_identifier }}"
+geome_container_network: "{{ geome_identifier }}"
 
 # Control if the container network is deleted on uninstalling.
-reitti_container_network_deletion_enabled: true
+geome_container_network_deletion_enabled: true
 
-# reitti_restart_necessary controls whether the Reitti systemd
+# geome_restart_necessary controls whether the Geome systemd
 # services will be restarted (when true) or merely started (when false) by the
 # systemd service manager role (when conditional restart is enabled).
 #
@@ -34,107 +34,107 @@ reitti_container_network_deletion_enabled: true
 # any configuration files, the systemd service file, or the container image changed.
 # The default of `false` means "no restart needed" — appropriate when the role's
 # installation tasks haven't run (e.g., due to --tags skipping them).
-reitti_restart_necessary: false
+geome_restart_necessary: false
 
 ########################################################################
 #                                                                      #
-# reitti                                                               #
+# geome                                                               #
 #                                                                      #
 ########################################################################
 
 # renovate: datasource=docker depName=dedicatedcode/reitti
-reitti_version: 4.0.4
+geome_version: 4.0.4
 
-reitti_scheme: https
+geome_scheme: https
 
-# The hostname at which Reitti is served.
-reitti_hostname: ""
+# The hostname at which Geome is served.
+geome_hostname: ""
 
-# The path at which Reitti is exposed
-reitti_path_prefix: "/"
+# The path at which Geome is exposed
+geome_path_prefix: "/"
 
-reitti_container_image: "{{ reitti_container_image_registry_prefix }}dedicatedcode/reitti:{{ reitti_container_image_tag }}"
-reitti_container_image_tag: "{{ reitti_version }}"
-reitti_container_image_registry_prefix: "{{ reitti_container_image_registry_prefix_upstream }}"
-reitti_container_image_registry_prefix_upstream: "{{ reitti_container_image_registry_prefix_upstream_default }}"
-reitti_container_image_registry_prefix_upstream_default: docker.io/
-reitti_container_image_force_pull: "{{ reitti_container_image.endswith(':latest') }}"
+geome_container_image: "{{ geome_container_image_registry_prefix }}dedicatedcode/reitti:{{ geome_container_image_tag }}"
+geome_container_image_tag: "{{ geome_version }}"
+geome_container_image_registry_prefix: "{{ geome_container_image_registry_prefix_upstream }}"
+geome_container_image_registry_prefix_upstream: "{{ geome_container_image_registry_prefix_upstream_default }}"
+geome_container_image_registry_prefix_upstream_default: docker.io/
+geome_container_image_force_pull: "{{ geome_container_image.endswith(':latest') }}"
 
-# Specify how the Reitti container publishes its HTTP port (as defined by `reitti_container_http_port`).
+# Specify how the Geome container publishes its HTTP port (as defined by `geome_container_http_port`).
 #
 # Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:2586"), or empty string to not expose.
-reitti_container_http_host_bind_port: ""
+geome_container_http_host_bind_port: ""
 
 # The port number in the container
-reitti_container_http_port: 8080
+geome_container_http_port: 8080
 
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
 # Use this to expose this container to another reverse proxy, which runs in a different container network.
-reitti_container_additional_networks: "{{ reitti_container_additional_networks_auto + reitti_container_additional_networks_custom }}"
-reitti_container_additional_networks_auto: []
-reitti_container_additional_networks_custom: []
+geome_container_additional_networks: "{{ geome_container_additional_networks_auto + geome_container_additional_networks_custom }}"
+geome_container_additional_networks_auto: []
+geome_container_additional_networks_custom: []
 
 # A list of additional "volumes" to mount in the container.
 # This list gets populated dynamically at runtime. You can provide a different default value,
 # if you wish to mount your own files into the container.
 # Contains definition objects like this: `{"type": "bind", "src": "/outside", "dst": "/inside", "options": "readonly"}.
 # See the `--mount` documentation for the `docker run` command.
-reitti_container_additional_volumes: "{{ reitti_container_additional_volumes_auto + reitti_container_additional_volumes_custom }}"
-reitti_container_additional_volumes_auto: []
-reitti_container_additional_volumes_custom: []
+geome_container_additional_volumes: "{{ geome_container_additional_volumes_auto + geome_container_additional_volumes_custom }}"
+geome_container_additional_volumes_auto: []
+geome_container_additional_volumes_custom: []
 
-# reitti_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
+# geome_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
 # See `../templates/labels.j2` for details.
 #
-# To inject your own other container labels, see `reitti_container_labels_additional_labels_custom`.
-reitti_container_labels_traefik_enabled: true
-reitti_container_labels_traefik_docker_network: "{{ reitti_container_network }}"
-reitti_container_labels_traefik_hostname: "{{ reitti_hostname }}"
-# The path prefix must either be `/` or not end with a slash (e.g. `/reitti`).
-reitti_container_labels_traefik_path_prefix: "{{ reitti_path_prefix }}"
-reitti_container_labels_traefik_rule: "Host(`{{ reitti_container_labels_traefik_hostname }}`){% if reitti_container_labels_traefik_path_prefix != '/' %} && PathPrefix(`{{ reitti_container_labels_traefik_path_prefix }}`){% endif %}"
-reitti_container_labels_traefik_priority: 0
-reitti_container_labels_traefik_entrypoints: web-secure
-reitti_container_labels_traefik_tls: "{{ reitti_container_labels_traefik_entrypoints != 'web' }}"
-reitti_container_labels_traefik_tls_certResolver: default  # noqa var-naming
+# To inject your own other container labels, see `geome_container_labels_additional_labels_custom`.
+geome_container_labels_traefik_enabled: true
+geome_container_labels_traefik_docker_network: "{{ geome_container_network }}"
+geome_container_labels_traefik_hostname: "{{ geome_hostname }}"
+# The path prefix must either be `/` or not end with a slash (e.g. `/geome`).
+geome_container_labels_traefik_path_prefix: "{{ geome_path_prefix }}"
+geome_container_labels_traefik_rule: "Host(`{{ geome_container_labels_traefik_hostname }}`){% if geome_container_labels_traefik_path_prefix != '/' %} && PathPrefix(`{{ geome_container_labels_traefik_path_prefix }}`){% endif %}"
+geome_container_labels_traefik_priority: 0
+geome_container_labels_traefik_entrypoints: web-secure
+geome_container_labels_traefik_tls: "{{ geome_container_labels_traefik_entrypoints != 'web' }}"
+geome_container_labels_traefik_tls_certResolver: default  # noqa var-naming
 
 # Controls which additional headers to attach to all HTTP requests.
-# To add your own custom request headers, use `reitti_container_labels_traefik_additional_request_headers_custom`
-reitti_container_labels_traefik_additional_request_headers: "{{ reitti_container_labels_traefik_additional_request_headers_auto | combine(reitti_container_labels_traefik_additional_request_headers_custom) }}"
-reitti_container_labels_traefik_additional_request_headers_auto: {}
-reitti_container_labels_traefik_additional_request_headers_custom: {}
+# To add your own custom request headers, use `geome_container_labels_traefik_additional_request_headers_custom`
+geome_container_labels_traefik_additional_request_headers: "{{ geome_container_labels_traefik_additional_request_headers_auto | combine(geome_container_labels_traefik_additional_request_headers_custom) }}"
+geome_container_labels_traefik_additional_request_headers_auto: {}
+geome_container_labels_traefik_additional_request_headers_custom: {}
 
 # Controls which additional headers to attach to all HTTP responses.
-# To add your own custom response headers, use `reitti_container_labels_traefik_additional_response_headers_custom`
-reitti_container_labels_traefik_additional_response_headers: "{{ reitti_container_labels_traefik_additional_response_headers_auto | combine(reitti_container_labels_traefik_additional_response_headers_custom) }}"
-reitti_container_labels_traefik_additional_response_headers_auto: |
+# To add your own custom response headers, use `geome_container_labels_traefik_additional_response_headers_custom`
+geome_container_labels_traefik_additional_response_headers: "{{ geome_container_labels_traefik_additional_response_headers_auto | combine(geome_container_labels_traefik_additional_response_headers_custom) }}"
+geome_container_labels_traefik_additional_response_headers_auto: |
   {{
     {}
-    | combine ({'X-XSS-Protection': reitti_http_header_xss_protection} if reitti_http_header_xss_protection else {})
-    | combine ({'X-Content-Type-Options': reitti_http_header_content_type_options} if reitti_http_header_content_type_options else {})
-    | combine ({'Content-Security-Policy': reitti_http_header_content_security_policy} if reitti_http_header_content_security_policy else {})
-    | combine ({'Permissions-Policy': reitti_http_header_permissions_policy} if reitti_http_header_permissions_policy else {})
-    | combine ({'Strict-Transport-Security': reitti_http_header_strict_transport_security} if reitti_http_header_strict_transport_security and reitti_container_labels_traefik_tls else {})
+    | combine ({'X-XSS-Protection': geome_http_header_xss_protection} if geome_http_header_xss_protection else {})
+    | combine ({'X-Content-Type-Options': geome_http_header_content_type_options} if geome_http_header_content_type_options else {})
+    | combine ({'Content-Security-Policy': geome_http_header_content_security_policy} if geome_http_header_content_security_policy else {})
+    | combine ({'Permissions-Policy': geome_http_header_permissions_policy} if geome_http_header_permissions_policy else {})
+    | combine ({'Strict-Transport-Security': geome_http_header_strict_transport_security} if geome_http_header_strict_transport_security and geome_container_labels_traefik_tls else {})
   }}
-reitti_container_labels_traefik_additional_response_headers_custom: {}
+geome_container_labels_traefik_additional_response_headers_custom: {}
 
-# reitti_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
-# To add your own custom labels, use `reitti_container_labels_additional_labels_custom`
+# geome_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
+# To add your own custom labels, use `geome_container_labels_additional_labels_custom`
 # See `../templates/labels.j2` for details.
 #
 # Example:
-# reitti_container_labels_additional_labels_custom:
+# geome_container_labels_additional_labels_custom:
 #   - my.label=1
 #   - another.label="here"
-reitti_container_labels_additional_labels: "{{ reitti_container_labels_additional_labels_auto + reitti_container_labels_additional_labels_custom }}"
-reitti_container_labels_additional_labels_auto: []
-reitti_container_labels_additional_labels_custom: []
+geome_container_labels_additional_labels: "{{ geome_container_labels_additional_labels_auto + geome_container_labels_additional_labels_custom }}"
+geome_container_labels_additional_labels_auto: []
+geome_container_labels_additional_labels_custom: []
 
 # A list of extra arguments to pass to the container (`docker create` command)
-reitti_container_extra_arguments: "{{ reitti_container_extra_arguments_auto + reitti_container_extra_arguments_custom }}"
-reitti_container_extra_arguments_auto: []
-reitti_container_extra_arguments_custom: []
+geome_container_extra_arguments: "{{ geome_container_extra_arguments_auto + geome_container_extra_arguments_custom }}"
+geome_container_extra_arguments_auto: []
+geome_container_extra_arguments_custom: []
 
 # Specifies the value of the `X-XSS-Protection` header
 # Stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.
@@ -142,23 +142,23 @@ reitti_container_extra_arguments_custom: []
 # Learn more about it is here:
 # - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
 # - https://portswigger.net/web-security/cross-site-scripting/reflected
-reitti_http_header_xss_protection: "1; mode=block"
+geome_http_header_xss_protection: "1; mode=block"
 
 # Specifies the value of the `X-Content-Type-Options` header.
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
-reitti_http_header_content_type_options: nosniff
+geome_http_header_content_type_options: nosniff
 
 # Specifies the value of the `Content-Security-Policy` header.
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
-reitti_http_header_content_security_policy: frame-ancestors 'self'
+geome_http_header_content_security_policy: frame-ancestors 'self'
 
 # Specifies the value of the `Permissions-Policy` header.
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy
-reitti_http_header_permissions_policy: "{{ 'interest-cohort=()' if reitti_floc_optout_enabled else '' }}"
+geome_http_header_permissions_policy: "{{ 'interest-cohort=()' if geome_floc_optout_enabled else '' }}"
 
 # Specifies the value of the `Strict-Transport-Security` header.
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
-reitti_http_header_strict_transport_security: "max-age=31536000; includeSubDomains{{ '; preload' if reitti_hsts_preload_enabled else '' }}"
+geome_http_header_strict_transport_security: "max-age=31536000; includeSubDomains{{ '; preload' if geome_hsts_preload_enabled else '' }}"
 
 # Controls whether to send a "Permissions-Policy interest-cohort=();" header along with all responses
 #
@@ -168,8 +168,8 @@ reitti_http_header_strict_transport_security: "max-age=31536000; includeSubDomai
 # - https://amifloced.org/
 #
 # Of course, a better solution is to just stop using browsers (like Chrome), which participate in such tracking practices.
-# See: `reitti_http_header_permissions_policy`
-reitti_floc_optout_enabled: true
+# See: `geome_http_header_permissions_policy`
+geome_floc_optout_enabled: true
 
 # Controls if HSTS preloading is enabled
 #
@@ -180,82 +180,119 @@ reitti_floc_optout_enabled: true
 # - https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
 # - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
 # - https://hstspreload.org/#opt-in
-# See: `reitti_http_header_strict_transport_security`
-reitti_hsts_preload_enabled: false
+# See: `geome_http_header_strict_transport_security`
+geome_hsts_preload_enabled: false
 
-# List of systemd services that the Reitti systemd service depends on
-reitti_systemd_required_services_list: "{{ reitti_systemd_required_services_list_default + reitti_systemd_required_services_list_auto + reitti_systemd_required_services_list_custom }}"
-reitti_systemd_required_services_list_default: |
+# List of systemd services that the Geome systemd service depends on
+geome_systemd_required_services_list: "{{ geome_systemd_required_services_list_default + geome_systemd_required_services_list_auto + geome_systemd_required_services_list_custom }}"
+geome_systemd_required_services_list_default: |
   {{
     ([devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [])
     +
-    ([reitti_tilecache_identifier ~ '.service'])
+    ([geome_tilecache_identifier ~ '.service'])
   }}
-reitti_systemd_required_services_list_auto: []
-reitti_systemd_required_services_list_custom: []
+geome_systemd_required_services_list_auto: []
+geome_systemd_required_services_list_custom: []
 
-# List of systemd services that the Reitti systemd service wants
-reitti_systemd_wanted_services_list: "{{ reitti_systemd_wanted_services_list_default + reitti_systemd_wanted_services_list_auto + reitti_systemd_wanted_services_list_custom }}"
-reitti_systemd_wanted_services_list_default: []
-reitti_systemd_wanted_services_list_auto: []
-reitti_systemd_wanted_services_list_custom: []
+# List of systemd services that the Geome systemd service wants
+geome_systemd_wanted_services_list: "{{ geome_systemd_wanted_services_list_default + geome_systemd_wanted_services_list_auto + geome_systemd_wanted_services_list_custom }}"
+geome_systemd_wanted_services_list_default: []
+geome_systemd_wanted_services_list_auto: []
+geome_systemd_wanted_services_list_custom: []
 
 # Controls how long to wait for the container to stop gracefully before killing it.
-reitti_container_stop_grace_time_seconds: "{{ devture_systemd_docker_base_container_stop_grace_time_seconds }}"
+geome_container_stop_grace_time_seconds: "{{ devture_systemd_docker_base_container_stop_grace_time_seconds }}"
 
 # Controls how long the pre-start cleanup should wait for stale container-name release
 # before failing startup explicitly.
-reitti_container_cleanup_timeout_seconds: "{{ devture_systemd_docker_base_container_cleanup_timeout_seconds }}"
+geome_container_cleanup_timeout_seconds: "{{ devture_systemd_docker_base_container_cleanup_timeout_seconds }}"
 
 # Controls the delay between pre-start cleanup retries.
-reitti_container_cleanup_retry_delay_seconds: "{{ devture_systemd_docker_base_container_cleanup_retry_delay_seconds }}"
+geome_container_cleanup_retry_delay_seconds: "{{ devture_systemd_docker_base_container_cleanup_retry_delay_seconds }}"
 
 # Shell command used in the systemd pre-start phase to deterministically remove a stale
 # container and wait until Docker releases its name.
-reitti_container_cleanup_command: |
+geome_container_cleanup_command: |
   i=0;
-  while [ "$i" -lt {{ reitti_container_cleanup_timeout_seconds }} ]; do
-  {{ devture_systemd_docker_base_host_command_docker }} stop -t {{ reitti_container_stop_grace_time_seconds }} {{ reitti_identifier }} >/dev/null 2>&1 || true;
-  {{ devture_systemd_docker_base_host_command_docker }} rm -f {{ reitti_identifier }} >/dev/null 2>&1 || true;
-  if {{ devture_systemd_docker_base_host_command_docker }} container inspect {{ reitti_identifier }} >/dev/null 2>&1; then
+  while [ "$i" -lt {{ geome_container_cleanup_timeout_seconds }} ]; do
+  {{ devture_systemd_docker_base_host_command_docker }} stop -t {{ geome_container_stop_grace_time_seconds }} {{ geome_identifier }} >/dev/null 2>&1 || true;
+  {{ devture_systemd_docker_base_host_command_docker }} rm -f {{ geome_identifier }} >/dev/null 2>&1 || true;
+  if {{ devture_systemd_docker_base_host_command_docker }} container inspect {{ geome_identifier }} >/dev/null 2>&1; then
   i=$((i + 1));
-  sleep {{ reitti_container_cleanup_retry_delay_seconds }};
+  sleep {{ geome_container_cleanup_retry_delay_seconds }};
   continue;
   fi;
   if {{ devture_systemd_docker_base_host_command_docker }} info >/dev/null 2>&1; then
   exit 0;
   fi;
-  echo "Failed to query Docker daemon while cleaning up {{ reitti_identifier }}" >&2;
+  echo "Failed to query Docker daemon while cleaning up {{ geome_identifier }}" >&2;
   exit 1;
   done;
-  echo "Failed to remove stale container {{ reitti_identifier }} after {{ reitti_container_cleanup_timeout_seconds }} attempts" >&2;
+  echo "Failed to remove stale container {{ geome_identifier }} after {{ geome_container_cleanup_timeout_seconds }} attempts" >&2;
   exit 1
 
 # Specify database configuration
-reitti_database_hostname: ""
-reitti_database_port: 5432
-reitti_database_username: reitti
-reitti_database_password: ""
-reitti_database_name: reitti
+geome_database_hostname: ""
+geome_database_port: 5432
+geome_database_username: geome
+geome_database_password: ""
+geome_database_name: geome
 
 # Specify Redis configuration
-reitti_redis_hostname: ""
-reitti_redis_port: 6379
-reitti_redis_username: ""
-reitti_redis_password: ""
-reitti_redis_database: "0"
+geome_redis_hostname: ""
+geome_redis_port: 6379
+geome_redis_username: ""
+geome_redis_password: ""
+geome_redis_database: "0"
 
 # Specify the timezone
-reitti_environment_variables_tz: UTC
+geome_environment_variables_tz: UTC
 
-reitti_environment_variables_logging_level: INFO
-
-# Additional environment variables.
-reitti_environment_variables_additional_variables: ""
+geome_environment_variables_logging_level: INFO
 
 ########################################################################
 #                                                                      #
-# /reitti                                                              #
+# map_bounds — restrict the map to a specific geographic area          #
+#                                                                      #
+# Defaults pin the viewport to the 77523 ZIP (Mont Belvieu + Cove +    #
+# Beach City TX) — the eagledrive.live coverage footprint. Map cannot  #
+# be panned outside [sw, ne], and tile-cache prewarming respects this. #
+#                                                                      #
+# These get passed through to the container as GEOME_MAP_* env vars.   #
+# The upstream Reitti app does NOT yet honor these vars — apply our    #
+# patch in ~/sgc/apps/geome (map-renderer.js + GpsDataManager) to wire #
+# them to MapLibre's `maxBounds` and `fitBounds` calls.                #
+#                                                                      #
+########################################################################
+
+# Southwest corner [lat, lng]. 77523 footprint default.
+geome_map_bounds_sw_lat: 29.685
+geome_map_bounds_sw_lng: -94.960
+
+# Northeast corner [lat, lng].
+geome_map_bounds_ne_lat: 29.890
+geome_map_bounds_ne_lng: -94.825
+
+# Default map center on first load.
+geome_map_center_lat: 29.844
+geome_map_center_lng: -94.890
+
+# Min/max zoom levels — keep the user inside readable scales for this area.
+geome_map_min_zoom: 10
+geome_map_max_zoom: 18
+geome_map_default_zoom: 13
+
+# Strictness: when true, MapLibre's `maxBounds` is enforced — the user
+# physically can't pan outside the box. When false, the bounds are a soft
+# initial framing but panning is unrestricted.
+geome_map_bounds_strict: true
+
+# Additional environment variables.
+geome_environment_variables_additional_variables: ""
+
+########################################################################
+#                                                                      #
+# /geome                                                              #
 #                                                                      #
 ########################################################################
 
@@ -265,102 +302,102 @@ reitti_environment_variables_additional_variables: ""
 #                                                                      #
 ########################################################################
 
-reitti_tilecache_identifier: "{{ reitti_identifier }}-tilecache"
+geome_tilecache_identifier: "{{ geome_identifier }}-tilecache"
 
 # renovate: datasource=docker depName=dedicatedcode/reitti-tile-cache
-reitti_tilecache_version: 4.0.4
+geome_tilecache_version: 4.0.4
 
-reitti_tilecache_scheme: http
+geome_tilecache_scheme: http
 
-reitti_tilecache_hostname: "{{ reitti_hostname }}"
+geome_tilecache_hostname: "{{ geome_hostname }}"
 
-# The path at which Reitti tile cache server is exposed
-reitti_tilecache_path_prefix: "/"
+# The path at which Geome tile cache server is exposed
+geome_tilecache_path_prefix: "/"
 
-reitti_tilecache_container_image: "{{ reitti_tilecache_container_image_registry_prefix }}dedicatedcode/reitti-tile-cache:{{ reitti_tilecache_container_image_tag }}"
-reitti_tilecache_container_image_tag: "{{ reitti_tilecache_version }}"
-reitti_tilecache_container_image_registry_prefix: "{{ reitti_tilecache_container_image_registry_prefix_upstream }}"
-reitti_tilecache_container_image_registry_prefix_upstream: "{{ reitti_tilecache_container_image_registry_prefix_upstream_default }}"
-reitti_tilecache_container_image_registry_prefix_upstream_default: docker.io/
-reitti_tilecache_container_image_force_pull: "{{ reitti_container_image.endswith(':latest') }}"
+geome_tilecache_container_image: "{{ geome_tilecache_container_image_registry_prefix }}dedicatedcode/reitti-tile-cache:{{ geome_tilecache_container_image_tag }}"
+geome_tilecache_container_image_tag: "{{ geome_tilecache_version }}"
+geome_tilecache_container_image_registry_prefix: "{{ geome_tilecache_container_image_registry_prefix_upstream }}"
+geome_tilecache_container_image_registry_prefix_upstream: "{{ geome_tilecache_container_image_registry_prefix_upstream_default }}"
+geome_tilecache_container_image_registry_prefix_upstream_default: docker.io/
+geome_tilecache_container_image_force_pull: "{{ geome_container_image.endswith(':latest') }}"
 
-reitti_tilecache_container_network: "{{ reitti_container_network }}"
+geome_tilecache_container_network: "{{ geome_container_network }}"
 
-# Specify how Reitti tile cache server container publishes its HTTP port (as defined by `reitti_tilecache_container_http_port`).
+# Specify how Geome tile cache server container publishes its HTTP port (as defined by `geome_tilecache_container_http_port`).
 #
 # Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:2586"), or empty string to not expose.
-reitti_tilecache_container_http_host_bind_port: ""
+geome_tilecache_container_http_host_bind_port: ""
 
 # The port number in the container
-reitti_tilecache_container_http_port: 8080
+geome_tilecache_container_http_port: 8080
 
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
 # Use this to expose this container to another reverse proxy, which runs in a different container network.
-reitti_tilecache_container_additional_networks: "{{ reitti_tilecache_container_additional_networks_auto + reitti_tilecache_container_additional_networks_custom }}"
-reitti_tilecache_container_additional_networks_auto: []
-reitti_tilecache_container_additional_networks_custom: []
+geome_tilecache_container_additional_networks: "{{ geome_tilecache_container_additional_networks_auto + geome_tilecache_container_additional_networks_custom }}"
+geome_tilecache_container_additional_networks_auto: []
+geome_tilecache_container_additional_networks_custom: []
 
 # A list of additional "volumes" to mount in the container.
 # This list gets populated dynamically at runtime. You can provide a different default value,
 # if you wish to mount your own files into the container.
 # Contains definition objects like this: `{"type": "bind", "src": "/outside", "dst": "/inside", "options": "readonly"}.
 # See the `--mount` documentation for the `docker run` command.
-reitti_tilecache_container_additional_volumes: "{{ reitti_tilecache_container_additional_volumes_auto + reitti_tilecache_container_additional_volumes_custom }}"
-reitti_tilecache_container_additional_volumes_auto: []
-reitti_tilecache_container_additional_volumes_custom: []
+geome_tilecache_container_additional_volumes: "{{ geome_tilecache_container_additional_volumes_auto + geome_tilecache_container_additional_volumes_custom }}"
+geome_tilecache_container_additional_volumes_auto: []
+geome_tilecache_container_additional_volumes_custom: []
 
-# reitti_tilecache_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
+# geome_tilecache_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
 # See `../templates/labels_tilecache.j2` for details.
 #
-# To inject your own other container labels, see `reitti_tilecache_container_labels_additional_labels_custom`.
-reitti_tilecache_container_labels_traefik_enabled: false
-reitti_tilecache_container_labels_traefik_docker_network: "{{ reitti_tilecache_container_network }}"
-reitti_tilecache_container_labels_traefik_hostname: "{{ reitti_tilecache_hostname }}"
+# To inject your own other container labels, see `geome_tilecache_container_labels_additional_labels_custom`.
+geome_tilecache_container_labels_traefik_enabled: false
+geome_tilecache_container_labels_traefik_docker_network: "{{ geome_tilecache_container_network }}"
+geome_tilecache_container_labels_traefik_hostname: "{{ geome_tilecache_hostname }}"
 # The path prefix must either be `/` or not end with a slash (e.g. `/server`).
-reitti_tilecache_container_labels_traefik_path_prefix: "{{ reitti_tilecache_path_prefix }}"
-reitti_tilecache_container_labels_traefik_rule: "Host(`{{ reitti_tilecache_container_labels_traefik_hostname }}`){% if reitti_tilecache_container_labels_traefik_path_prefix != '/' %} && PathPrefix(`{{ reitti_tilecache_container_labels_traefik_path_prefix }}`){% endif %}"
-reitti_tilecache_container_labels_traefik_priority: 0
-reitti_tilecache_container_labels_traefik_entrypoints: web-secure
-reitti_tilecache_container_labels_traefik_tls: "{{ reitti_tilecache_container_labels_traefik_entrypoints != 'web' }}"
-reitti_tilecache_container_labels_traefik_tls_certResolver: default  # noqa var-naming
+geome_tilecache_container_labels_traefik_path_prefix: "{{ geome_tilecache_path_prefix }}"
+geome_tilecache_container_labels_traefik_rule: "Host(`{{ geome_tilecache_container_labels_traefik_hostname }}`){% if geome_tilecache_container_labels_traefik_path_prefix != '/' %} && PathPrefix(`{{ geome_tilecache_container_labels_traefik_path_prefix }}`){% endif %}"
+geome_tilecache_container_labels_traefik_priority: 0
+geome_tilecache_container_labels_traefik_entrypoints: web-secure
+geome_tilecache_container_labels_traefik_tls: "{{ geome_tilecache_container_labels_traefik_entrypoints != 'web' }}"
+geome_tilecache_container_labels_traefik_tls_certResolver: default  # noqa var-naming
 
 # Controls which additional headers to attach to all HTTP requests.
-# To add your own custom request headers, use `reitti_tilecache_container_labels_traefik_additional_request_headers_custom`
-reitti_tilecache_container_labels_traefik_additional_request_headers: "{{ reitti_tilecache_container_labels_traefik_additional_request_headers_auto | combine(reitti_tilecache_container_labels_traefik_additional_request_headers_custom) }}"
-reitti_tilecache_container_labels_traefik_additional_request_headers_auto: {}
-reitti_tilecache_container_labels_traefik_additional_request_headers_custom: {}
+# To add your own custom request headers, use `geome_tilecache_container_labels_traefik_additional_request_headers_custom`
+geome_tilecache_container_labels_traefik_additional_request_headers: "{{ geome_tilecache_container_labels_traefik_additional_request_headers_auto | combine(geome_tilecache_container_labels_traefik_additional_request_headers_custom) }}"
+geome_tilecache_container_labels_traefik_additional_request_headers_auto: {}
+geome_tilecache_container_labels_traefik_additional_request_headers_custom: {}
 
 # Controls which additional headers to attach to all HTTP responses.
-# To add your own custom response headers, use `reitti_tilecache_container_labels_traefik_additional_response_headers_custom`
-reitti_tilecache_container_labels_traefik_additional_response_headers: "{{ reitti_tilecache_container_labels_traefik_additional_response_headers_auto | combine(reitti_tilecache_container_labels_traefik_additional_response_headers_custom) }}"
-reitti_tilecache_container_labels_traefik_additional_response_headers_auto: |
+# To add your own custom response headers, use `geome_tilecache_container_labels_traefik_additional_response_headers_custom`
+geome_tilecache_container_labels_traefik_additional_response_headers: "{{ geome_tilecache_container_labels_traefik_additional_response_headers_auto | combine(geome_tilecache_container_labels_traefik_additional_response_headers_custom) }}"
+geome_tilecache_container_labels_traefik_additional_response_headers_auto: |
   {{
     {}
-    | combine ({'X-XSS-Protection': reitti_tilecache_http_header_xss_protection} if reitti_tilecache_http_header_xss_protection else {})
-    | combine ({'X-Content-Type-Options': reitti_tilecache_http_header_content_type_options} if reitti_tilecache_http_header_content_type_options else {})
-    | combine ({'Content-Security-Policy': reitti_tilecache_http_header_content_security_policy} if reitti_tilecache_http_header_content_security_policy else {})
-    | combine ({'Permissions-Policy': reitti_tilecache_http_header_permissions_policy} if reitti_tilecache_http_header_permissions_policy else {})
-    | combine ({'Strict-Transport-Security': reitti_tilecache_http_header_strict_transport_security} if reitti_tilecache_http_header_strict_transport_security and reitti_tilecache_container_labels_traefik_tls else {})
+    | combine ({'X-XSS-Protection': geome_tilecache_http_header_xss_protection} if geome_tilecache_http_header_xss_protection else {})
+    | combine ({'X-Content-Type-Options': geome_tilecache_http_header_content_type_options} if geome_tilecache_http_header_content_type_options else {})
+    | combine ({'Content-Security-Policy': geome_tilecache_http_header_content_security_policy} if geome_tilecache_http_header_content_security_policy else {})
+    | combine ({'Permissions-Policy': geome_tilecache_http_header_permissions_policy} if geome_tilecache_http_header_permissions_policy else {})
+    | combine ({'Strict-Transport-Security': geome_tilecache_http_header_strict_transport_security} if geome_tilecache_http_header_strict_transport_security and geome_tilecache_container_labels_traefik_tls else {})
   }}
-reitti_tilecache_container_labels_traefik_additional_response_headers_custom: {}
+geome_tilecache_container_labels_traefik_additional_response_headers_custom: {}
 
-# reitti_tilecache_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
-# To add your own custom labels, use `reitti_tilecache_container_labels_additional_labels_custom`
+# geome_tilecache_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
+# To add your own custom labels, use `geome_tilecache_container_labels_additional_labels_custom`
 # See `../templates/labels_tilecache.j2` for details.
 #
 # Example:
-# reitti_tilecache_container_labels_additional_labels_custom:
+# geome_tilecache_container_labels_additional_labels_custom:
 #   - my.label=1
 #   - another.label="here"
-reitti_tilecache_container_labels_additional_labels: "{{ reitti_tilecache_container_labels_additional_labels_auto + reitti_tilecache_container_labels_additional_labels_custom }}"
-reitti_tilecache_container_labels_additional_labels_auto: []
-reitti_tilecache_container_labels_additional_labels_custom: []
+geome_tilecache_container_labels_additional_labels: "{{ geome_tilecache_container_labels_additional_labels_auto + geome_tilecache_container_labels_additional_labels_custom }}"
+geome_tilecache_container_labels_additional_labels_auto: []
+geome_tilecache_container_labels_additional_labels_custom: []
 
 # A list of extra arguments to pass to the container (`docker create` command)
-reitti_tilecache_container_extra_arguments: "{{ reitti_tilecache_container_extra_arguments_auto + reitti_tilecache_container_extra_arguments_custom }}"
-reitti_tilecache_container_extra_arguments_auto: []
-reitti_tilecache_container_extra_arguments_custom: []
+geome_tilecache_container_extra_arguments: "{{ geome_tilecache_container_extra_arguments_auto + geome_tilecache_container_extra_arguments_custom }}"
+geome_tilecache_container_extra_arguments_auto: []
+geome_tilecache_container_extra_arguments_custom: []
 
 # Specifies the value of the `X-XSS-Protection` header
 # Stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.
@@ -368,23 +405,23 @@ reitti_tilecache_container_extra_arguments_custom: []
 # Learn more about it is here:
 # - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
 # - https://portswigger.net/web-security/cross-site-scripting/reflected
-reitti_tilecache_http_header_xss_protection: "1; mode=block"
+geome_tilecache_http_header_xss_protection: "1; mode=block"
 
 # Specifies the value of the `X-Content-Type-Options` header.
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
-reitti_tilecache_http_header_content_type_options: nosniff
+geome_tilecache_http_header_content_type_options: nosniff
 
 # Specifies the value of the `Content-Security-Policy` header.
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
-reitti_tilecache_http_header_content_security_policy: frame-ancestors 'self'
+geome_tilecache_http_header_content_security_policy: frame-ancestors 'self'
 
 # Specifies the value of the `Permissions-Policy` header.
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy
-reitti_tilecache_http_header_permissions_policy: "{{ 'interest-cohort=()' if reitti_tilecache_floc_optout_enabled else '' }}"
+geome_tilecache_http_header_permissions_policy: "{{ 'interest-cohort=()' if geome_tilecache_floc_optout_enabled else '' }}"
 
 # Specifies the value of the `Strict-Transport-Security` header.
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
-reitti_tilecache_http_header_strict_transport_security: "max-age=31536000; includeSubDomains{{ '; preload' if reitti_tilecache_hsts_preload_enabled else '' }}"
+geome_tilecache_http_header_strict_transport_security: "max-age=31536000; includeSubDomains{{ '; preload' if geome_tilecache_hsts_preload_enabled else '' }}"
 
 # Controls whether to send a "Permissions-Policy interest-cohort=();" header along with all responses
 #
@@ -394,8 +431,8 @@ reitti_tilecache_http_header_strict_transport_security: "max-age=31536000; inclu
 # - https://amifloced.org/
 #
 # Of course, a better solution is to just stop using browsers (like Chrome), which participate in such tracking practices.
-# See: `reitti_tilecache_http_header_permissions_policy`
-reitti_tilecache_floc_optout_enabled: true
+# See: `geome_tilecache_http_header_permissions_policy`
+geome_tilecache_floc_optout_enabled: true
 
 # Controls if HSTS preloading is enabled
 #
@@ -406,57 +443,57 @@ reitti_tilecache_floc_optout_enabled: true
 # - https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
 # - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
 # - https://hstspreload.org/#opt-in
-# See: `reitti_http_header_strict_transport_security`
-reitti_tilecache_hsts_preload_enabled: false
+# See: `geome_http_header_strict_transport_security`
+geome_tilecache_hsts_preload_enabled: false
 
-# List of systemd services that the Reitti tile cache server systemd service depends on
-reitti_tilecache_systemd_required_services_list: "{{ reitti_tilecache_systemd_required_services_list_default + reitti_tilecache_systemd_required_services_list_auto + reitti_tilecache_systemd_required_services_list_custom }}"
-reitti_tilecache_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
-reitti_tilecache_systemd_required_services_list_auto: []
-reitti_tilecache_systemd_required_services_list_custom: []
+# List of systemd services that the Geome tile cache server systemd service depends on
+geome_tilecache_systemd_required_services_list: "{{ geome_tilecache_systemd_required_services_list_default + geome_tilecache_systemd_required_services_list_auto + geome_tilecache_systemd_required_services_list_custom }}"
+geome_tilecache_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+geome_tilecache_systemd_required_services_list_auto: []
+geome_tilecache_systemd_required_services_list_custom: []
 
-# List of systemd services that the Reitti tile cache server systemd service wants
-reitti_tilecache_systemd_wanted_services_list: "{{ reitti_tilecache_systemd_wanted_services_list_default + reitti_tilecache_systemd_wanted_services_list_auto + reitti_tilecache_systemd_wanted_services_list_custom }}"
-reitti_tilecache_systemd_wanted_services_list_default: []
-reitti_tilecache_systemd_wanted_services_list_auto: []
-reitti_tilecache_systemd_wanted_services_list_custom: []
+# List of systemd services that the Geome tile cache server systemd service wants
+geome_tilecache_systemd_wanted_services_list: "{{ geome_tilecache_systemd_wanted_services_list_default + geome_tilecache_systemd_wanted_services_list_auto + geome_tilecache_systemd_wanted_services_list_custom }}"
+geome_tilecache_systemd_wanted_services_list_default: []
+geome_tilecache_systemd_wanted_services_list_auto: []
+geome_tilecache_systemd_wanted_services_list_custom: []
 
 # Controls how long to wait for the container to stop gracefully before killing it.
-reitti_tilecache_container_stop_grace_time_seconds: "{{ devture_systemd_docker_base_container_stop_grace_time_seconds }}"
+geome_tilecache_container_stop_grace_time_seconds: "{{ devture_systemd_docker_base_container_stop_grace_time_seconds }}"
 
 # Controls how long the pre-start cleanup should wait for stale container-name release
 # before failing startup explicitly.
-reitti_tilecache_container_cleanup_timeout_seconds: "{{ devture_systemd_docker_base_container_cleanup_timeout_seconds }}"
+geome_tilecache_container_cleanup_timeout_seconds: "{{ devture_systemd_docker_base_container_cleanup_timeout_seconds }}"
 
 # Controls the delay between pre-start cleanup retries.
-reitti_tilecache_container_cleanup_retry_delay_seconds: "{{ devture_systemd_docker_base_container_cleanup_retry_delay_seconds }}"
+geome_tilecache_container_cleanup_retry_delay_seconds: "{{ devture_systemd_docker_base_container_cleanup_retry_delay_seconds }}"
 
 # Shell command used in the systemd pre-start phase to deterministically remove a stale
 # container and wait until Docker releases its name.
-reitti_tilecache_container_cleanup_command: |
+geome_tilecache_container_cleanup_command: |
   i=0;
-  while [ "$i" -lt {{ reitti_tilecache_container_cleanup_timeout_seconds }} ]; do
-  {{ devture_systemd_docker_base_host_command_docker }} stop -t {{ reitti_tilecache_container_stop_grace_time_seconds }} {{ reitti_tilecache_identifier }} >/dev/null 2>&1 || true;
-  {{ devture_systemd_docker_base_host_command_docker }} rm -f {{ reitti_tilecache_identifier }} >/dev/null 2>&1 || true;
-  if {{ devture_systemd_docker_base_host_command_docker }} container inspect {{ reitti_tilecache_identifier }} >/dev/null 2>&1; then
+  while [ "$i" -lt {{ geome_tilecache_container_cleanup_timeout_seconds }} ]; do
+  {{ devture_systemd_docker_base_host_command_docker }} stop -t {{ geome_tilecache_container_stop_grace_time_seconds }} {{ geome_tilecache_identifier }} >/dev/null 2>&1 || true;
+  {{ devture_systemd_docker_base_host_command_docker }} rm -f {{ geome_tilecache_identifier }} >/dev/null 2>&1 || true;
+  if {{ devture_systemd_docker_base_host_command_docker }} container inspect {{ geome_tilecache_identifier }} >/dev/null 2>&1; then
   i=$((i + 1));
-  sleep {{ reitti_tilecache_container_cleanup_retry_delay_seconds }};
+  sleep {{ geome_tilecache_container_cleanup_retry_delay_seconds }};
   continue;
   fi;
   if {{ devture_systemd_docker_base_host_command_docker }} info >/dev/null 2>&1; then
   exit 0;
   fi;
-  echo "Failed to query Docker daemon while cleaning up {{ reitti_tilecache_identifier }}" >&2;
+  echo "Failed to query Docker daemon while cleaning up {{ geome_tilecache_identifier }}" >&2;
   exit 1;
   done;
-  echo "Failed to remove stale container {{ reitti_tilecache_identifier }} after {{ reitti_tilecache_container_cleanup_timeout_seconds }} attempts" >&2;
+  echo "Failed to remove stale container {{ geome_tilecache_identifier }} after {{ geome_tilecache_container_cleanup_timeout_seconds }} attempts" >&2;
   exit 1
 
 # Specify the timezone
-reitti_tilecache_environment_variables_tz: UTC
+geome_tilecache_environment_variables_tz: UTC
 
 # Additional environment variables.
-reitti_tilecache_environment_variables_additional_variables: ""
+geome_tilecache_environment_variables_additional_variables: ""
 
 ########################################################################
 #                                                                      #
