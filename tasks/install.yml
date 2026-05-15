@@ -6,19 +6,19 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-- name: Ensure Reitti paths exist
+- name: Ensure Geome paths exist
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     mode: "0750"
-    owner: "{{ reitti_uid }}"
-    group: "{{ reitti_gid }}"
+    owner: "{{ geome_uid }}"
+    group: "{{ geome_gid }}"
   with_items:
-    - "{{ reitti_base_path }}"
-    - "{{ reitti_data_path }}"
-    - "{{ reitti_tilecache_base_path }}"
+    - "{{ geome_base_path }}"
+    - "{{ geome_data_path }}"
+    - "{{ geome_tilecache_base_path }}"
 
-- name: Ensure Reitti tile cache server data path exists
+- name: Ensure Geome tile cache server data path exists
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
@@ -26,72 +26,72 @@
     owner: "33" # www-data
     group: "33" # www-data
   with_items:
-    - "{{ reitti_tilecache_data_path }}"
+    - "{{ geome_tilecache_data_path }}"
 
-- name: Ensure Reitti support files installed
+- name: Ensure Geome support files installed
   ansible.builtin.template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
     mode: "0640"
-    owner: "{{ reitti_uid }}"
-    group: "{{ reitti_gid }}"
+    owner: "{{ geome_uid }}"
+    group: "{{ geome_gid }}"
   with_items:
-    - { src: "{{ role_path }}/templates/labels.j2", dest: "{{ reitti_base_path }}/labels" }
-    - { src: "{{ role_path }}/templates/labels_tilecache.j2", dest: "{{ reitti_tilecache_base_path }}/labels" }
-    - { src: "{{ role_path }}/templates/env.j2", dest: "{{ reitti_base_path }}/env" }
-    - { src: "{{ role_path }}/templates/env_tilecache.j2", dest: "{{ reitti_tilecache_base_path }}/env" }
-  register: reitti_support_files_result
+    - { src: "{{ role_path }}/templates/labels.j2", dest: "{{ geome_base_path }}/labels" }
+    - { src: "{{ role_path }}/templates/labels_tilecache.j2", dest: "{{ geome_tilecache_base_path }}/labels" }
+    - { src: "{{ role_path }}/templates/env.j2", dest: "{{ geome_base_path }}/env" }
+    - { src: "{{ role_path }}/templates/env_tilecache.j2", dest: "{{ geome_tilecache_base_path }}/env" }
+  register: geome_support_files_result
 
-- name: Ensure Reitti container images are pulled
+- name: Ensure Geome container images are pulled
   community.docker.docker_image:
     name: "{{ item.image }}"
     source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
   with_items:
-    - { image: "{{ reitti_container_image }}" }
-    - { image: "{{ reitti_tilecache_container_image }}" }
-  register: reitti_container_image_pull_result
+    - { image: "{{ geome_container_image }}" }
+    - { image: "{{ geome_tilecache_container_image }}" }
+  register: geome_container_image_pull_result
   retries: "{{ devture_playbook_help_container_retries_count }}"
   delay: "{{ devture_playbook_help_container_retries_delay }}"
-  until: reitti_container_image_pull_result is not failed
+  until: geome_container_image_pull_result is not failed
 
-- name: Ensure Reitti container network is created via community.docker.docker_network
+- name: Ensure Geome container network is created via community.docker.docker_network
   when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
   community.docker.docker_network:
     enable_ipv6: "{{ devture_systemd_docker_base_ipv6_enabled }}"
-    name: "{{ reitti_container_network }}"
+    name: "{{ geome_container_network }}"
     driver: bridge
     driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
-  register: reitti_network_creation_result
+  register: geome_network_creation_result
 
-- name: Ensure Reitti container network is created via ansible.builtin.command
+- name: Ensure Geome container network is created via ansible.builtin.command
   when: devture_systemd_docker_base_container_network_creation_method == 'command'
   ansible.builtin.command:
     cmd: >-
       {{ devture_systemd_docker_base_host_command_docker }} network create
       {% if devture_systemd_docker_base_ipv6_enabled %}--ipv6{% endif %}
       {{ devture_systemd_docker_base_container_networks_driver_options_string }}
-      {{ reitti_container_network }}
-  register: reitti_network_creation_result
-  changed_when: reitti_network_creation_result.rc == 0
-  failed_when: reitti_network_creation_result.rc != 0 and 'already exists' not in reitti_network_creation_result.stderr
+      {{ geome_container_network }}
+  register: geome_network_creation_result
+  changed_when: geome_network_creation_result.rc == 0
+  failed_when: geome_network_creation_result.rc != 0 and 'already exists' not in geome_network_creation_result.stderr
 
-- name: Ensure Reitti systemd services are present
+- name: Ensure Geome systemd services are present
   ansible.builtin.template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
     mode: "0644"
   with_items:
-    - src: "{{ role_path }}/templates/systemd/reitti.service.j2"
-      dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ reitti_identifier }}.service"
-    - src: "{{ role_path }}/templates/systemd/reitti-tilecache.service.j2"
-      dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ reitti_tilecache_identifier }}.service"
-  register: reitti_systemd_services_result
+    - src: "{{ role_path }}/templates/systemd/geome.service.j2"
+      dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ geome_identifier }}.service"
+    - src: "{{ role_path }}/templates/systemd/geome-tilecache.service.j2"
+      dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ geome_tilecache_identifier }}.service"
+  register: geome_systemd_services_result
 
-- name: Determine whether Reitti needs a restart
+- name: Determine whether Geome needs a restart
   ansible.builtin.set_fact:
-    reitti_restart_necessary: >-
+    geome_restart_necessary: >-
       {{
-        reitti_support_files_result.changed | default(false)
-        or reitti_systemd_services_result.changed | default(false)
-        or reitti_container_image_pull_result.changed | default(false)
+        geome_support_files_result.changed | default(false)
+        or geome_systemd_services_result.changed | default(false)
+        or geome_container_image_pull_result.changed | default(false)
       }}

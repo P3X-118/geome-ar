@@ -4,13 +4,13 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-- name: "Check existence of Reitti systemd service — {{ item.service }}"
+- name: "Check existence of Geome systemd service — {{ item.service }}"
   ansible.builtin.stat:
     path: "{{ item.path }}"
-  register: reitti_service_stat
+  register: geome_service_stat
 
-- name: Uninstall Reitti systemd service
-  when: reitti_service_stat.stat.exists | bool
+- name: Uninstall Geome systemd service
+  when: geome_service_stat.stat.exists | bool
   block:
     - name: Ensure the systemd service is stopped
       ansible.builtin.service:

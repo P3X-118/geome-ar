@@ -5,59 +5,59 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-- name: Fail if required Reitti settings not defined
+- name: Fail if required Geome settings not defined
   ansible.builtin.fail:
     msg: >-
       You need to define a required configuration setting (`{{ item }}`).
   when: "lookup('vars', item, default='') | string | length == 0"
   with_items:
-    - reitti_uid
-    - reitti_gid
-    - reitti_hostname
-    - reitti_path_prefix
-    - reitti_container_network
-    - reitti_database_hostname
-    - reitti_database_password
-    - reitti_redis_hostname
+    - geome_uid
+    - geome_gid
+    - geome_hostname
+    - geome_path_prefix
+    - geome_container_network
+    - geome_database_hostname
+    - geome_database_password
+    - geome_redis_hostname
 
-- name: Run if Traefik is enabled for Reitti tile cache server
-  when: reitti_tilecache_container_labels_traefik_enabled | bool
+- name: Run if Traefik is enabled for Geome tile cache server
+  when: geome_tilecache_container_labels_traefik_enabled | bool
   block:
-    - name: Fail if Traefik settings required for Reitti tile cache server are not defined
+    - name: Fail if Traefik settings required for Geome tile cache server are not defined
       ansible.builtin.fail:
         msg: >-
           You need to define a required configuration setting (`{{ item }}`).
       when: "lookup('vars', item, default='') | string | length == 0"
       with_items:
-        - reitti_tilecache_container_labels_traefik_hostname
-        - reitti_tilecache_container_labels_traefik_path_prefix
+        - geome_tilecache_container_labels_traefik_hostname
+        - geome_tilecache_container_labels_traefik_path_prefix
 
     # We ensure it doesn't end with a slash, because we handle both (slash and no-slash).
-    # Knowing that `reitti_tilecache_container_labels_traefik_path_prefix` does not end with a slash
+    # Knowing that `geome_tilecache_container_labels_traefik_path_prefix` does not end with a slash
     # ensures we know how to set these routes up without having to do "does it end with a slash" checks elsewhere.
-    - name: Fail if reitti_tilecache_container_labels_traefik_path_prefix ends with a slash
+    - name: Fail if geome_tilecache_container_labels_traefik_path_prefix ends with a slash
       ansible.builtin.fail:
         msg: >-
-          reitti_tilecache_container_labels_traefik_path_prefix (`{{ reitti_tilecache_container_labels_traefik_path_prefix }}`) must either be `/` or not end with a slash (e.g. `/reitti`).
-      when: "reitti_tilecache_container_labels_traefik_path_prefix != '/' and reitti_tilecache_container_labels_traefik_path_prefix[-1] == '/'"
+          geome_tilecache_container_labels_traefik_path_prefix (`{{ geome_tilecache_container_labels_traefik_path_prefix }}`) must either be `/` or not end with a slash (e.g. `/geome`).
+      when: "geome_tilecache_container_labels_traefik_path_prefix != '/' and geome_tilecache_container_labels_traefik_path_prefix[-1] == '/'"
 
-- name: Run if Traefik is enabled for Reitti
-  when: reitti_container_labels_traefik_enabled | bool
+- name: Run if Traefik is enabled for Geome
+  when: geome_container_labels_traefik_enabled | bool
   block:
-    - name: Fail if Traefik settings required for Reitti are not defined
+    - name: Fail if Traefik settings required for Geome are not defined
       ansible.builtin.fail:
         msg: >-
           You need to define a required configuration setting (`{{ item }}`).
       when: "lookup('vars', item, default='') | string | length == 0"
       with_items:
-        - reitti_container_labels_traefik_hostname
-        - reitti_container_labels_traefik_path_prefix
+        - geome_container_labels_traefik_hostname
+        - geome_container_labels_traefik_path_prefix
 
     # We ensure it doesn't end with a slash, because we handle both (slash and no-slash).
-    # Knowing that `reitti_container_labels_traefik_path_prefix` does not end with a slash
+    # Knowing that `geome_container_labels_traefik_path_prefix` does not end with a slash
     # ensures we know how to set these routes up without having to do "does it end with a slash" checks elsewhere.
-    - name: Fail if reitti_container_labels_traefik_path_prefix ends with a slash
+    - name: Fail if geome_container_labels_traefik_path_prefix ends with a slash
       ansible.builtin.fail:
         msg: >-
-          reitti_container_labels_traefik_path_prefix (`{{ reitti_container_labels_traefik_path_prefix }}`) must either be `/` or not end with a slash (e.g. `/reitti`).
-      when: "reitti_container_labels_traefik_path_prefix != '/' and reitti_container_labels_traefik_path_prefix[-1] == '/'"
+          geome_container_labels_traefik_path_prefix (`{{ geome_container_labels_traefik_path_prefix }}`) must either be `/` or not end with a slash (e.g. `/geome`).
+      when: "geome_container_labels_traefik_path_prefix != '/' and geome_container_labels_traefik_path_prefix[-1] == '/'"

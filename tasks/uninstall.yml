@@ -4,113 +4,113 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-- name: Ensure Reitti systemd services are stopped and removed
+- name: Ensure Geome systemd services are stopped and removed
   ansible.builtin.include_tasks: "{{ role_path }}/tasks/remove_service.yml"
   with_items:
-    - service: "{{ reitti_identifier }}.service"
-      path: "{{ devture_systemd_docker_base_systemd_path }}/{{ reitti_identifier }}.service"
-    - service: "{{ reitti_tilecache_identifier }}.service"
-      path: "{{ devture_systemd_docker_base_systemd_path }}/{{ reitti_tilecache_identifier }}.service"
+    - service: "{{ geome_identifier }}.service"
+      path: "{{ devture_systemd_docker_base_systemd_path }}/{{ geome_identifier }}.service"
+    - service: "{{ geome_tilecache_identifier }}.service"
+      path: "{{ devture_systemd_docker_base_systemd_path }}/{{ geome_tilecache_identifier }}.service"
 
-- name: Ensure Reitti container network does not exist
-  when: reitti_container_network_deletion_enabled
+- name: Ensure Geome container network does not exist
+  when: geome_container_network_deletion_enabled
   block:
-    - name: Ensure Reitti container network does not exist via community.docker.docker_network
+    - name: Ensure Geome container network does not exist via community.docker.docker_network
       when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
       community.docker.docker_network:
-        name: "{{ reitti_container_network }}"
+        name: "{{ geome_container_network }}"
         state: absent
 
-    - name: Ensure Reitti container network does not exist via ansible.builtin.command
+    - name: Ensure Geome container network does not exist via ansible.builtin.command
       when: devture_systemd_docker_base_container_network_creation_method == 'command'
       ansible.builtin.command:
         cmd: >-
           {{ devture_systemd_docker_base_host_command_docker }} network rm
-          {{ reitti_container_network }}
+          {{ geome_container_network }}
       register: network_deletion_result
       failed_when: network_deletion_result.rc > 0 and 'not found' not in network_deletion_result.stderr
-      changed_when: reitti_container_network in network_deletion_result.stdout
+      changed_when: geome_container_network in network_deletion_result.stdout
 
-- name: Remove Reitti tile cache server files
+- name: Remove Geome tile cache server files
   block:
-    - name: Ensure Reitti tile cache server support files do not exist
+    - name: Ensure Geome tile cache server support files do not exist
       ansible.builtin.file:
-        path: "{{ reitti_tilecache_base_path }}/{{ item }}"
+        path: "{{ geome_tilecache_base_path }}/{{ item }}"
         state: absent
       with_items:
         - env
         - labels
 
-    - name: Ensure Reitti tile cache server local data path does not exist if empty
+    - name: Ensure Geome tile cache server local data path does not exist if empty
       ansible.builtin.command:
-        cmd: "rmdir {{ reitti_tilecache_data_path }}"
-      register: reitti_tilecache_data_path_deletion_result
-      changed_when: reitti_tilecache_data_path_deletion_result.rc == 0
+        cmd: "rmdir {{ geome_tilecache_data_path }}"
+      register: geome_tilecache_data_path_deletion_result
+      changed_when: geome_tilecache_data_path_deletion_result.rc == 0
       failed_when: false
 
-    - name: Ensure Reitti tile cache server base path does not exist if empty
+    - name: Ensure Geome tile cache server base path does not exist if empty
       ansible.builtin.command:
-        cmd: "rmdir {{ reitti_tilecache_base_path }}"
-      register: reitti_tilecache_base_path_deletion_result
-      changed_when: reitti_tilecache_base_path_deletion_result.rc == 0
+        cmd: "rmdir {{ geome_tilecache_base_path }}"
+      register: geome_tilecache_base_path_deletion_result
+      changed_when: geome_tilecache_base_path_deletion_result.rc == 0
       failed_when: false
 
-    - name: Check existence of Reitti tile cache server local data path
+    - name: Check existence of Geome tile cache server local data path
       ansible.builtin.stat:
-        path: "{{ reitti_tilecache_data_path }}"
-      register: reitti_tilecache_data_path_stat
+        path: "{{ geome_tilecache_data_path }}"
+      register: geome_tilecache_data_path_stat
 
     # We just want to notify the user. Deleting data is too destructive.
-    - name: Inject the message about the remaining Reitti tile cache server local data path
-      when: reitti_tilecache_data_path_stat.stat.exists | bool
+    - name: Inject the message about the remaining Geome tile cache server local data path
+      when: geome_tilecache_data_path_stat.stat.exists | bool
       ansible.builtin.set_fact:
         devture_playbook_runtime_messages_list: |
           {{
             devture_playbook_runtime_messages_list | default([])
             +
             [
-              "Note: As the local Reitti instance has been removed, some old data remains in `" + reitti_tilecache_data_path + "`. Feel free to delete it."
+              "Note: As the local Geome instance has been removed, some old data remains in `" + geome_tilecache_data_path + "`. Feel free to delete it."
             ]
           }}
 
-- name: Remove Reitti files
+- name: Remove Geome files
   block:
-    - name: Ensure Reitti support files do not exist
+    - name: Ensure Geome support files do not exist
       ansible.builtin.file:
-        path: "{{ reitti_base_path }}/{{ item }}"
+        path: "{{ geome_base_path }}/{{ item }}"
         state: absent
       with_items:
         - env
         - labels
 
-    - name: Ensure Reitti local data path does not exist if empty
+    - name: Ensure Geome local data path does not exist if empty
       ansible.builtin.command:
-        cmd: "rmdir {{ reitti_data_path }}"
-      register: reitti_data_path_deletion_result
-      changed_when: reitti_data_path_deletion_result.rc == 0
+        cmd: "rmdir {{ geome_data_path }}"
+      register: geome_data_path_deletion_result
+      changed_when: geome_data_path_deletion_result.rc == 0
       failed_when: false
 
-    - name: Ensure Reitti base path does not exist if empty
+    - name: Ensure Geome base path does not exist if empty
       ansible.builtin.command:
-        cmd: "rmdir {{ reitti_base_path }}"
-      register: reitti_base_path_deletion_result
-      changed_when: reitti_base_path_deletion_result.rc == 0
+        cmd: "rmdir {{ geome_base_path }}"
+      register: geome_base_path_deletion_result
+      changed_when: geome_base_path_deletion_result.rc == 0
       failed_when: false
 
-    - name: Check existence of Reitti local data path
+    - name: Check existence of Geome local data path
       ansible.builtin.stat:
-        path: "{{ reitti_data_path }}"
-      register: reitti_data_path_stat
+        path: "{{ geome_data_path }}"
+      register: geome_data_path_stat
 
     # We just want to notify the user. Deleting data is too destructive.
-    - name: Inject the message about the remaining Reitti local data path
-      when: reitti_data_path_stat.stat.exists | bool
+    - name: Inject the message about the remaining Geome local data path
+      when: geome_data_path_stat.stat.exists | bool
       ansible.builtin.set_fact:
         devture_playbook_runtime_messages_list: |
           {{
             devture_playbook_runtime_messages_list | default([])
             +
             [
-              "Note: As the local Reitti instance has been removed, some old data remains in `" + reitti_data_path + "`. Feel free to delete it."
+              "Note: As the local Geome instance has been removed, some old data remains in `" + geome_data_path + "`. Feel free to delete it."
             ]
           }}

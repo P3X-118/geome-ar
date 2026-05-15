@@ -2,9 +2,9 @@
 galaxy_info:
   author: Suguru Hirahara
   company: progressiv
-  role_name: reitti
+  role_name: geome
   namespace: progressiv
-  description: Reitti
+  description: Geome
   platforms:
     - name: Debian
       versions:
