@@ -505,14 +505,34 @@ geome_tilecache_environment_variables_additional_variables: ""
 
 ########################################################################
 #                                                                      #
-# playbook_help compat shim                                            #
+# MASH → SGC compat shim                                                #
 #                                                                      #
-# install.yml uses devture_playbook_help_container_retries_{count,delay}#
-# (a MASH-ism inherited from upstream). The SGC playbook_help role      #
-# instead exposes container_retry / container_retry_delay. Bridge them  #
-# here so the role is self-sufficient on SGC without a global define.   #
+# The role's tasks/templates use devture_* var names inherited from    #
+# upstream MASH. SGC's equivalents (playbook_help, systemd_docker_base) #
+# expose different names and only set them when their own tagged tasks  #
+# run — which they don't under `install-geome`. Defaults are always     #
+# loaded, so bridge every devture_* the role needs here, sourcing the   #
+# SGC value with a sane literal fallback.                               #
 #                                                                      #
 ########################################################################
 
+# playbook_help
 devture_playbook_help_container_retries_count: "{{ container_retry | default(10) }}"
 devture_playbook_help_container_retries_delay: "{{ container_retry_delay | default(10) }}"
+devture_playbook_runtime_messages_list: []
+
+# systemd_docker_base
+devture_systemd_docker_base_host_command_docker: "{{ sysd_docker_host_command | default('/usr/bin/env docker') }}"
+devture_systemd_docker_base_host_command_sh: "{{ sysd_docker_host_sh | default('/usr/bin/env sh') }}"
+devture_systemd_docker_base_systemd_path: "{{ sysd_docker_service_path | default('/etc/systemd/system') }}"
+devture_systemd_docker_base_systemd_unit_home_path: "{{ sysd_docker_unit_home_path | default('/usr/local/share') }}"
+devture_systemd_docker_base_container_stop_grace_time_seconds: "{{ sysd_docker_stop_grace | default(3) }}"
+devture_systemd_docker_base_container_network_creation_method: "{{ sysd_docker_net_creation_method | default('ansible-module') }}"
+devture_systemd_docker_base_container_networks_driver_options: "{{ sysd_docker_net_driver_opts | default({}) }}"
+# MASH expects a "k=v,k2=v2" string form of the driver-options dict.
+devture_systemd_docker_base_container_networks_driver_options_string: >-
+  {{ (sysd_docker_net_driver_opts | default({}))
+     | dict2items | map(attribute='key') | zip((sysd_docker_net_driver_opts | default({})) | dict2items | map(attribute='value'))
+     | map('join', '=') | join(',') }}
+# IP version for created networks. 4 = IPv4-only (matches SGC default posture).
+devture_systemd_docker_base_ipv: 4
