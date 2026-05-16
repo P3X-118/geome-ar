@@ -501,3 +501,18 @@ geome_tilecache_environment_variables_additional_variables: ""
 # /tile_cache                                                          #
 #                                                                      #
 ########################################################################
+
+
+########################################################################
+#                                                                      #
+# playbook_help compat shim                                            #
+#                                                                      #
+# install.yml uses devture_playbook_help_container_retries_{count,delay}#
+# (a MASH-ism inherited from upstream). The SGC playbook_help role      #
+# instead exposes container_retry / container_retry_delay. Bridge them  #
+# here so the role is self-sufficient on SGC without a global define.   #
+#                                                                      #
+########################################################################
+
+devture_playbook_help_container_retries_count: "{{ container_retry | default(10) }}"
+devture_playbook_help_container_retries_delay: "{{ container_retry_delay | default(10) }}"
