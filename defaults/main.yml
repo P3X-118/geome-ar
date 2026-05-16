@@ -534,5 +534,5 @@ devture_systemd_docker_base_container_networks_driver_options_string: >-
   {{ (sysd_docker_net_driver_opts | default({}))
      | dict2items | map(attribute='key') | zip((sysd_docker_net_driver_opts | default({})) | dict2items | map(attribute='value'))
      | map('join', '=') | join(',') }}
-# IP version for created networks. 4 = IPv4-only (matches SGC default posture).
-devture_systemd_docker_base_ipv: 4
+# IPv4-only networks (matches SGC default posture; no IPv6 on the host).
+devture_systemd_docker_base_ipv6_enabled: false
