@@ -254,37 +254,38 @@ geome_environment_variables_logging_level: INFO
 #                                                                      #
 # map_bounds — restrict the map to a specific geographic area          #
 #                                                                      #
-# Defaults pin the viewport to the 77523 ZIP (Mont Belvieu + Cove +    #
-# Beach City TX) — the eagledrive.live coverage footprint. Map cannot  #
-# be panned outside [sw, ne], and tile-cache prewarming respects this. #
+# The viewport is CENTERED on Mont Belvieu / 77523 (the eagledrive.live #
+# coverage footprint) but the hard pan limit (maxBounds) is the wider  #
+# Houston ↔ Beaumont box — the user must not be able to pan the map     #
+# wider than the greater Houston/Beaumont metro span.                   #
 #                                                                      #
-# These get passed through to the container as GEOME_MAP_* env vars.   #
-# The upstream Reitti app does NOT yet honor these vars — apply our    #
-# patch in ~/sgc/apps/geome (map-renderer.js + GpsDataManager) to wire #
-# them to MapLibre's `maxBounds` and `fitBounds` calls.                #
+# Passed to the container as GEOME_MAP_* env. Honored by this fork's    #
+# GeomeMapBoundsAdvice → window.geomeMapConfig → map-renderer.js, which #
+# sets MapLibre `maxBounds` (strict) + center/zoom.                     #
 #                                                                      #
 ########################################################################
 
-# Southwest corner [lat, lng]. 77523 footprint default.
-geome_map_bounds_sw_lat: 29.685
-geome_map_bounds_sw_lng: -94.960
+# Southwest corner [lat, lng] — south/west of Houston, with margin.
+geome_map_bounds_sw_lat: 29.45
+geome_map_bounds_sw_lng: -95.65
 
-# Northeast corner [lat, lng].
-geome_map_bounds_ne_lat: 29.890
-geome_map_bounds_ne_lng: -94.825
+# Northeast corner [lat, lng] — north/east of Beaumont, with margin.
+geome_map_bounds_ne_lat: 30.35
+geome_map_bounds_ne_lng: -93.95
 
-# Default map center on first load.
+# Default map center on first load — Mont Belvieu (77523).
 geome_map_center_lat: 29.844
 geome_map_center_lng: -94.890
 
-# Min/max zoom levels — keep the user inside readable scales for this area.
-geome_map_min_zoom: 10
+# Zoom levels. min_zoom 9 ≈ the whole Houston–Beaumont span fits;
+# default 11 frames the 77523 area; can't zoom out past the box.
+geome_map_min_zoom: 9
 geome_map_max_zoom: 18
-geome_map_default_zoom: 13
+geome_map_default_zoom: 11
 
 # Strictness: when true, MapLibre's `maxBounds` is enforced — the user
-# physically can't pan outside the box. When false, the bounds are a soft
-# initial framing but panning is unrestricted.
+# physically can't pan outside the Houston↔Beaumont box. When false,
+# bounds are a soft initial framing but panning is unrestricted.
 geome_map_bounds_strict: true
 
 # Additional environment variables.
