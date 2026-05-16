@@ -536,3 +536,6 @@ devture_systemd_docker_base_container_networks_driver_options_string: >-
      | map('join', '=') | join(',') }}
 # IPv4-only networks (matches SGC default posture; no IPv6 on the host).
 devture_systemd_docker_base_ipv6_enabled: false
+devture_systemd_docker_base_docker_service_name: "{{ sysd_docker_service | default('docker.service') }}"
+devture_systemd_docker_base_container_cleanup_retry_delay_seconds: 1
+devture_systemd_docker_base_container_cleanup_timeout_seconds: 60
