@@ -50,26 +50,26 @@
     - { image: "{{ geome_container_image }}" }
     - { image: "{{ geome_tilecache_container_image }}" }
   register: geome_container_image_pull_result
-  retries: "{{ devture_playbook_help_container_retries_count }}"
-  delay: "{{ devture_playbook_help_container_retries_delay }}"
+  retries: "{{ container_retry }}"
+  delay: "{{ container_retry_delay }}"
   until: geome_container_image_pull_result is not failed
 
 - name: Ensure Geome container network is created via community.docker.docker_network
-  when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
+  when: sysd_docker_net_creation_method == 'ansible-module'
   community.docker.docker_network:
-    enable_ipv6: "{{ devture_systemd_docker_base_ipv6_enabled }}"
+    enable_ipv6: "{{ sysd_docker_ipv6_enabled }}"
     name: "{{ geome_container_network }}"
     driver: bridge
-    driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
+    driver_options: "{{ sysd_docker_net_driver_opts }}"
   register: geome_network_creation_result
 
 - name: Ensure Geome container network is created via ansible.builtin.command
-  when: devture_systemd_docker_base_container_network_creation_method == 'command'
+  when: sysd_docker_net_creation_method == 'command'
   ansible.builtin.command:
     cmd: >-
-      {{ devture_systemd_docker_base_host_command_docker }} network create
-      {% if devture_systemd_docker_base_ipv6_enabled %}--ipv6{% endif %}
-      {{ devture_systemd_docker_base_container_networks_driver_options_string }}
+      {{ sysd_docker_host_command }} network create
+      {% if sysd_docker_ipv6_enabled %}--ipv6{% endif %}
+      {{ sysd_docker_net_driver_opts_string }}
       {{ geome_container_network }}
   register: geome_network_creation_result
   changed_when: geome_network_creation_result.rc == 0
@@ -82,9 +82,9 @@
     mode: "0644"
   with_items:
     - src: "{{ role_path }}/templates/systemd/geome.service.j2"
-      dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ geome_identifier }}.service"
+      dest: "{{ sysd_docker_service_path }}/{{ geome_identifier }}.service"
     - src: "{{ role_path }}/templates/systemd/geome-tilecache.service.j2"
-      dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ geome_tilecache_identifier }}.service"
+      dest: "{{ sysd_docker_service_path }}/{{ geome_tilecache_identifier }}.service"
   register: geome_systemd_services_result
 
 - name: Determine whether Geome needs a restart
